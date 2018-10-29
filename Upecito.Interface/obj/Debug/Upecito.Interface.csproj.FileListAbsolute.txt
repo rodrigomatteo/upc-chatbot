@@ -25,3 +25,12 @@ D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot\Microsoft.Bot.Sample.FormBot\Upecito.In
 D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot\Microsoft.Bot.Sample.FormBot\Upecito.Interface\obj\Debug\Upecito.Interface.csproj.CopyComplete
 D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot\Microsoft.Bot.Sample.FormBot\Upecito.Interface\obj\Debug\Upecito.Interface.dll
 D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot\Microsoft.Bot.Sample.FormBot\Upecito.Interface\obj\Debug\Upecito.Interface.pdb
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\bin\Debug\Upecito.Interface.dll
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\bin\Debug\Upecito.Interface.pdb
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\bin\Debug\Upecito.Model.dll
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\bin\Debug\Upecito.Model.pdb
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\obj\Debug\Upecito.Interface.csprojAssemblyReference.cache
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\obj\Debug\Upecito.Interface.csproj.CoreCompileInputs.cache
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\obj\Debug\Upecito.Interface.csproj.CopyComplete
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\obj\Debug\Upecito.Interface.dll
+D:\UPC\Tesis Chatbot UPC\NET\upc-chatbot-src\Upecito.Interface\obj\Debug\Upecito.Interface.pdb
