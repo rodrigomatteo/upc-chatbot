@@ -35,6 +35,7 @@ namespace SimpleEchoBot
                         .SingleInstance();
 
                 });
+
             GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }

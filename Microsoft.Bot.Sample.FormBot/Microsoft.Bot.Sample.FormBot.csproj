@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project=".\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('.\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project=".\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props" Condition="Exists('.\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" />
@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FormBot</RootNamespace>
     <AssemblyName>FormBot</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +47,21 @@
     <NoWarn>CS1998</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Api.Ai.ApplicationService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Api.Ai.Csharp.1.0.2.4\lib\net461\Api.Ai.ApplicationService.dll</HintPath>
+    </Reference>
+    <Reference Include="Api.Ai.Domain.DataTransferObject, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Api.Ai.Csharp.1.0.2.4\lib\net461\Api.Ai.Domain.DataTransferObject.dll</HintPath>
+    </Reference>
+    <Reference Include="Api.Ai.Domain.Enum, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Api.Ai.Csharp.1.0.2.4\lib\net461\Api.Ai.Domain.Enum.dll</HintPath>
+    </Reference>
+    <Reference Include="Api.Ai.Domain.Service, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Api.Ai.Csharp.1.0.2.4\lib\net461\Api.Ai.Domain.Service.dll</HintPath>
+    </Reference>
+    <Reference Include="Api.Ai.Infrastructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Api.Ai.Csharp.1.0.2.4\lib\net461\Api.Ai.Infrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
@@ -124,8 +140,11 @@
       <HintPath>packages\WindowsAzure.Storage.7.2.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleInjector, Version=4.2.2.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>packages\SimpleInjector.4.2.2\lib\net45\SimpleInjector.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.1.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -148,9 +167,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>.\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
       <Private>True</Private>
@@ -171,8 +190,26 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConstant.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="DependencyResolver\BLUnityResolver.cs" />
+    <Compile Include="DependencyResolver\DADependencyRegister.cs" />
+    <Compile Include="DependencyResolver\UnityConfig.cs" />
+    <Compile Include="DialogEngine.cs" />
+    <Compile Include="Dialogs\BaseDialog.cs" />
+    <Compile Include="Dialogs\CalendarioDialog.cs" />
+    <Compile Include="Dialogs\CerrarSesionDialog.cs" />
+    <Compile Include="Dialogs\CreditosDialog.cs" />
+    <Compile Include="Dialogs\EntrenandoDialog.cs" />
+    <Compile Include="Dialogs\MenuDialog.cs" />
+    <Compile Include="Dialogs\NoRespuestaDialog.cs" />
+    <Compile Include="Dialogs\OrganizacionDialog.cs" />
+    <Compile Include="Dialogs\PreguntasFrecuentesDialog.cs" />
+    <Compile Include="Dialogs\ProgramacionActividadesDialog.cs" />
+    <Compile Include="Dialogs\RootDialog.cs" />
+    <Compile Include="Dialogs\SinScoreDialog.cs" />
+    <Compile Include="Dialogs\WelcomeDialog.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -187,6 +224,25 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Upecito.Business\Upecito.Business.csproj">
+      <Project>{eb82224e-362c-4064-b80f-a775f3ad8ef9}</Project>
+      <Name>Upecito.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Upecito.Data\Upecito.Data.csproj">
+      <Project>{d51759e5-3d8c-4d1a-89c4-98d5d2ceecdb}</Project>
+      <Name>Upecito.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Upecito.Interface\Upecito.Interface.csproj">
+      <Project>{57e6a28c-567b-402b-b9d4-1e0b3d541137}</Project>
+      <Name>Upecito.Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Upecito.Model\Upecito.Model.csproj">
+      <Project>{5a633ef8-87e7-4645-a940-a1bf5c0b2ccd}</Project>
+      <Name>Upecito.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
