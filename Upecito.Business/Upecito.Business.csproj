@@ -52,19 +52,5 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Upecito.Data\Upecito.Data.csproj">
-      <Project>{d51759e5-3d8c-4d1a-89c4-98d5d2ceecdb}</Project>
-      <Name>Upecito.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Upecito.Interface\Upecito.Interface.csproj">
-      <Project>{57E6A28C-567B-402B-B9D4-1E0B3D541137}</Project>
-      <Name>Upecito.Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Upecito.Model\Upecito.Model.csproj">
-      <Project>{5a633ef8-87e7-4645-a940-a1bf5c0b2ccd}</Project>
-      <Name>Upecito.Model</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

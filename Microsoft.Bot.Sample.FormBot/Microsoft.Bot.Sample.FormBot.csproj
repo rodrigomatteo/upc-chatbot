@@ -1001,6 +1001,31 @@
     <Compile Include="packages\Microsoft.Bot.Builder.History.3.15.2.2\src\ReplayTranscript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Sandwich.cs" />
+    <Compile Include="Upecito.Business\IntencionManager.cs" />
+    <Compile Include="Upecito.Business\SesionManager.cs" />
+    <Compile Include="Upecito.Business\SolicitudManager.cs" />
+    <Compile Include="Upecito.Interface\IIntencion.cs" />
+    <Compile Include="Upecito.Interface\ISesion.cs" />
+    <Compile Include="Upecito.Interface\ISolicitud.cs" />
+    <Compile Include="Upecito.Model\Intencion.cs" />
+    <Compile Include="Upecito.Model\Result.cs" />
+    <Compile Include="Upecito.Model\Sesion.cs" />
+    <Compile Include="Upecito.Model\Solicitud.cs" />
+    <Compile Include="UpecitoData\Base.cs" />
+    <Compile Include="UpecitoData\Common\Cn.cs" />
+    <Compile Include="UpecitoData\Common\MSSQLSERVERCnx.cs" />
+    <Compile Include="UpecitoData\Common\SP.cs" />
+    <Compile Include="UpecitoData\Implementation\BaseData.cs" />
+    <Compile Include="UpecitoData\Interface\IIntencionData.cs" />
+    <Compile Include="UpecitoData\Interface\ISesionData.cs" />
+    <Compile Include="UpecitoData\Interface\ISolicitudData.cs" />
+    <Compile Include="UpecitoData\MSSQLSERVER\Implementacion\IntencionData.cs" />
+    <Compile Include="UpecitoData\MSSQLSERVER\Implementacion\SesionData.cs" />
+    <Compile Include="UpecitoData\MSSQLSERVER\Implementacion\SolicitudData.cs" />
+    <Compile Include="UpecitoData\Oracle\Implementacion\IntencionData.cs" />
+    <Compile Include="UpecitoData\Oracle\Implementacion\SesionData.cs" />
+    <Compile Include="UpecitoData\Oracle\Implementacion\SolicitudData.cs" />
+    <Compile Include="UpecitoData\Util\UtilConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -1101,24 +1126,6 @@
     </None>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <ProjectReference Include="..\Upecito.Business\Upecito.Business.csproj">
-      <Project>{eb82224e-362c-4064-b80f-a775f3ad8ef9}</Project>
-      <Name>Upecito.Business</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Upecito.Data\Upecito.Data.csproj">
-      <Project>{d51759e5-3d8c-4d1a-89c4-98d5d2ceecdb}</Project>
-      <Name>Upecito.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Upecito.Interface\Upecito.Interface.csproj">
-      <Project>{57e6a28c-567b-402b-b9d4-1e0b3d541137}</Project>
-      <Name>Upecito.Interface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Upecito.Model\Upecito.Model.csproj">
-      <Project>{5a633ef8-87e7-4645-a940-a1bf5c0b2ccd}</Project>
-      <Name>Upecito.Model</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

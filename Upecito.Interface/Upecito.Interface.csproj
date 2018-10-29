@@ -46,11 +46,5 @@
     <Compile Include="ISolicitud.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Upecito.Model\Upecito.Model.csproj">
-      <Project>{5A633EF8-87E7-4645-A940-A1BF5C0B2CCD}</Project>
-      <Name>Upecito.Model</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
