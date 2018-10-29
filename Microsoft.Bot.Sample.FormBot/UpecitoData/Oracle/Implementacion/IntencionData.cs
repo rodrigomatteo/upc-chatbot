@@ -23,8 +23,10 @@ namespace Upecito.Data.Oracle.Implementacion
                 {
                     OracleCommand oCmd = null;
                     oCnn.Open();
-                    oCmd = new OracleCommand("SP_BUSCARINTENCIONCONSULTA", oCnn);
-                    oCmd.CommandType = CommandType.StoredProcedure;
+                    oCmd = new OracleCommand("SP_BUSCARINTENCIONCONSULTA", oCnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     oCmd.Parameters.Add(new OracleParameter("pIntencion", OracleDbType.Varchar2)).Value = intencion;
                     oCmd.Parameters.Add(new OracleParameter("RESULTADO", OracleDbType.RefCursor)).Direction = ParameterDirection.Output;
                     var rd = oCmd.ExecuteReader();
@@ -44,7 +46,7 @@ namespace Upecito.Data.Oracle.Implementacion
 
                 return categoria;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //LogError(ex);
             }

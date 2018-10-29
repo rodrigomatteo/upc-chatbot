@@ -21,8 +21,10 @@ namespace Upecito.Data.Oracle.Implementacion
                 {
                     OracleCommand oCmd = null;
                     oCnn.Open();
-                    oCmd = new OracleCommand("SP_CREARSESION", oCnn);
-                    oCmd.CommandType = CommandType.StoredProcedure;
+                    oCmd = new OracleCommand("SP_CREARSESION", oCnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     oCmd.Parameters.Add(new OracleParameter("pIdAlumno", OracleDbType.Int64)).Value = idAlumno;
                     oCmd.Parameters.Add(new OracleParameter("pRpta", OracleDbType.Int64)).Direction = ParameterDirection.Output;
                     oCmd.ExecuteScalar();
@@ -42,7 +44,7 @@ namespace Upecito.Data.Oracle.Implementacion
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -80,8 +82,10 @@ namespace Upecito.Data.Oracle.Implementacion
                 {
                     OracleCommand oCmd = null;
                     oCnn.Open();
-                    oCmd = new OracleCommand("SP_CERRARSESION", oCnn);
-                    oCmd.CommandType = CommandType.StoredProcedure;
+                    oCmd = new OracleCommand("SP_CERRARSESION", oCnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     oCmd.Parameters.Add(new OracleParameter("pIdSesion", OracleDbType.Int64)).Value = idSesion;
                     oCmd.Parameters.Add(new OracleParameter("pRpta", OracleDbType.Int64)).Direction = ParameterDirection.Output;
                     oCmd.ExecuteScalar();
@@ -101,7 +105,7 @@ namespace Upecito.Data.Oracle.Implementacion
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

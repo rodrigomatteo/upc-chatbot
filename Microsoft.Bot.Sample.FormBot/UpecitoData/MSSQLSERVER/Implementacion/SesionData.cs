@@ -25,8 +25,10 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     SqlCommand cmd = null;
                     cnn.Open();
 
-                    cmd = new SqlCommand(SP.GSAV_SP_CREARSESION, cnn);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd = new SqlCommand(SP.GSAV_SP_CREARSESION, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     cmd.Parameters.AddWithValue("@pIdAlumno", idAlumno);
 
                     SqlDataReader rd = cmd.ExecuteReader();
@@ -44,7 +46,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 
                 return sesion;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -63,8 +65,10 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     SqlCommand cmd = null;
                     cnn.Open();
 
-                    cmd = new SqlCommand(SP.GSAV_SP_CERRARSESION, cnn);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd = new SqlCommand(SP.GSAV_SP_CERRARSESION, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
                     cmd.Parameters.AddWithValue("@pIdSesion", idSesion);
 
                     SqlDataReader rd = cmd.ExecuteReader();
@@ -81,7 +85,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                 }
                 return sesion;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

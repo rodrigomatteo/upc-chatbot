@@ -47,7 +47,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 
                 return categoria;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //LogError(ex);
             }

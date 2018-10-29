@@ -23,8 +23,10 @@ namespace Upecito.Data.Oracle.Implementacion
                 {
                     OracleCommand oCmd = null;
                     oCnn.Open();
-                    oCmd = new OracleCommand("SP_CREARSOLICITUD", oCnn);
-                    oCmd.CommandType = CommandType.StoredProcedure;
+                    oCmd = new OracleCommand("SP_CREARSOLICITUD", oCnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
 
                     oCmd.Parameters.Add(new OracleParameter("pIdCanalAtencion", OracleDbType.Int32)).Value = idCanalAtencion;
                     oCmd.Parameters.Add(new OracleParameter("pIdAlumno", OracleDbType.Int64)).Value = idAlumno;
@@ -39,18 +41,20 @@ namespace Upecito.Data.Oracle.Implementacion
                     {
                         while (rd.Read())
                         {
-                            solicitud_ = new Solicitud();
-                            solicitud_.IdSolicitud = rd.GetInt64(rd.GetOrdinal("IDSOLICITUD"));
-                            solicitud_.IdAlumno = rd.GetInt64(rd.GetOrdinal("IDALUMNO"));
-                            solicitud_.IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO"));
-                            solicitud_.Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA"));
-                            solicitud_.FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"));
+                            solicitud_ = new Solicitud
+                            {
+                                IdSolicitud = rd.GetInt64(rd.GetOrdinal("IDSOLICITUD")),
+                                IdAlumno = rd.GetInt64(rd.GetOrdinal("IDALUMNO")),
+                                IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
+                                Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
+                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
+                            };
                         }
                     }
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -80,7 +84,7 @@ namespace Upecito.Data.Oracle.Implementacion
                 //};
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //LogError(ex);
             }

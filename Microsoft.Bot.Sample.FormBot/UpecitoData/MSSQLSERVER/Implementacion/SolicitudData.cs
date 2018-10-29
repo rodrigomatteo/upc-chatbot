@@ -24,8 +24,10 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     SqlCommand cmd = null;
                     cnn.Open();
 
-                    cmd = new SqlCommand(SP.GSAV_SP_ACTUALIZARSOLICITUD, cnn);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd = new SqlCommand(SP.GSAV_SP_ACTUALIZARSOLICITUD, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
 
                     cmd.Parameters.AddWithValue("@pIdSolicitud", idSolicitud);
                     cmd.Parameters.AddWithValue("@pIdIntencion", idIntencion);
@@ -39,19 +41,21 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     {
                         while (rd.Read())
                         {
-                            solicitud_ = new Solicitud();
-                            solicitud_.IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD"));
-                            solicitud_.IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO"));
-                            solicitud_.IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO"));
-                            solicitud_.Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA"));
-                            solicitud_.FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"));
+                            solicitud_ = new Solicitud
+                            {
+                                IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
+                                IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
+                                IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
+                                Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
+                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
+                            };
                         }
                     }
 
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -70,8 +74,10 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     SqlCommand cmd = null;
                     cnn.Open();
 
-                    cmd = new SqlCommand(SP.GSAV_SP_CREARSOLICITUD, cnn);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd = new SqlCommand(SP.GSAV_SP_CREARSOLICITUD, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
 
                     cmd.Parameters.AddWithValue("@pIdCanalAtencion", idCanalAtencion);
                     cmd.Parameters.AddWithValue("@pIdAlumno", idAlumno);
@@ -85,19 +91,21 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     {
                         while (rd.Read())
                         {
-                            solicitud_ = new Solicitud();
-                            solicitud_.IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD"));
-                            solicitud_.IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO"));
-                            solicitud_.IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO"));
-                            solicitud_.Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA"));
-                            solicitud_.FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"));
+                            solicitud_ = new Solicitud
+                            {
+                                IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
+                                IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
+                                IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
+                                Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
+                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
+                            };
                         }
                     }
 
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
