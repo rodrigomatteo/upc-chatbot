@@ -49,8 +49,7 @@ namespace Microsoft.Bot.Sample.FormBot
             //ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
             //await connector.Conversations.ReplyToActivityAsync(reply);
 
-            if (activity.Type == ActivityTypes.Message
-            || activity.Type == ActivityTypes.ConversationUpdate)
+            if (activity.Type == ActivityTypes.Message || activity.Type == ActivityTypes.ConversationUpdate)
             {
                 // Because ConversationUpdate activity is received twice 
                 // (once for the Bot being added to the conversation, and the 2nd time - 
