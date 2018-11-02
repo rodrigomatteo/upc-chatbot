@@ -45,6 +45,10 @@ namespace Microsoft.Bot.Sample.FormBot
         {
             var response = Request.CreateResponse(System.Net.HttpStatusCode.OK);
 
+            var reply = activity.CreateReply("message.Type: " + activity.Type);
+            ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+            await connector.Conversations.ReplyToActivityAsync(reply);
+
             if (activity.Type == ActivityTypes.Message
             || activity.Type == ActivityTypes.ConversationUpdate)
             {
