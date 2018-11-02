@@ -246,6 +246,7 @@
     <Compile Include="UpecitoData\Oracle\Implementacion\SesionData.cs" />
     <Compile Include="UpecitoData\Oracle\Implementacion\SolicitudData.cs" />
     <Compile Include="UpecitoData\Util\UtilConverter.cs" />
+    <Compile Include="Util\ConvertidorUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

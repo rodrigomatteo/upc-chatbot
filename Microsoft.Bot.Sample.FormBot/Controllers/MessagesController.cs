@@ -80,18 +80,39 @@ namespace Microsoft.Bot.Sample.FormBot
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
 
-                if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
-                {
-                    var bot = message.MembersAdded.FirstOrDefault();
-                    if (bot != null && bot.Name.Equals("Upecito Bot"))
-                    {
-                        var dialog = container.GetInstance<RootDialog>();
-                        await Conversation.SendAsync(message, () => dialog);
-                    }
-                }
+                //IConversationUpdateActivity update = message;
+                //var client = new ConnectorClient(new Uri(message.ServiceUrl), new MicrosoftAppCredentials());
+                //if (update.MembersAdded != null && update.MembersAdded.Any())
+                //{
+                //    foreach (var newMember in update.MembersAdded)
+                //    {
+                //        if (newMember.Id != message.Recipient.Id)
+                //        {
+                //            await Conversation.SendAsync(message, () => new WelcomeDialog());
 
-                if (message.MembersRemoved.Count > 1)
-                    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
+                //            var dialog = container.GetInstance<WelcomeDialog>();
+                //            await Conversation.SendAsync(message, () => dialog);
+
+                //            var reply = message.CreateReply();
+                //            reply.Text = $"Hola {newMember.Name}, soy UPECITO el asesor del Aula Virtual de UPC.Te puedo ayudar con tus consultas académicas y Técnicas del Aula Virtual.";
+
+                //            client.Conversations.ReplyToActivityAsync(reply);
+                //        }
+                //    }
+                //}
+
+                //if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
+                //{
+                //    var bot = message.MembersAdded.FirstOrDefault();
+                //    if (bot != null && bot.Name.Equals("Upecito Bot"))
+                //    {
+                //        var dialog = container.GetInstance<RootDialog>();
+                //        await Conversation.SendAsync(message, () => dialog);
+                //    }
+                //}
+
+                //if (message.MembersRemoved.Count > 1)
+                //    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
@@ -104,16 +125,7 @@ namespace Microsoft.Bot.Sample.FormBot
             }
             else if (message.Type == ActivityTypes.Ping)
             {
-            }
-            else if (message.Type == ActivityTypes.ContactRelationUpdate)
-            {
-                if (message.Action == "add")
-                {
-                    var reply = message.CreateReply("WELCOME!!!");
-                    ConnectorClient connector = new ConnectorClient(new Uri(message.ServiceUrl));
-                    await connector.Conversations.ReplyToActivityAsync(reply);
-                }
-            }
+            }            
         }
     }
 }
