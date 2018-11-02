@@ -32,11 +32,15 @@ namespace FormBot.Dialogs
 
             if (sesionData == null)
             {
-                context.Call(new CerrarSesionDialog(), ResumeWelcome);
+                var message_ = context.MakeMessage();
+                message.Text = "No se pudo realizar la conexión con el servidor";
+                await context.PostAsync(message_);
             }
-
-            context.UserData.SetValue("sesion", sesionData);
-            context.Call(new MenuDialog(), ResumeWelcome);
+            else
+            {
+                context.UserData.SetValue("sesion", sesionData);
+                context.Call(new MenuDialog(), ResumeWelcome);
+            }            
         }
 
         private async Task ResumeWelcome(IDialogContext context, IAwaitable<object> result)
