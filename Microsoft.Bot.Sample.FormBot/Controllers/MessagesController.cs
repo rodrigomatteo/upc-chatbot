@@ -9,7 +9,7 @@ using System.Linq;
 using System.Net;
 using SimpleInjector;
 using FormBot.Dialogs;
-
+using System;
 
 namespace Microsoft.Bot.Sample.FormBot
 {
@@ -80,18 +80,18 @@ namespace Microsoft.Bot.Sample.FormBot
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
 
-                //if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
-                //{
-                //    var bot = message.MembersAdded.FirstOrDefault();
-                //    if (bot != null && bot.Name.Equals("Upecito Bot"))
-                //    {
-                //        var dialog = container.GetInstance<RootDialog>();
-                //        await Conversation.SendAsync(message, () => dialog);
-                //    }
-                //}
+                if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
+                {
+                    var bot = message.MembersAdded.FirstOrDefault();
+                    if (bot != null && bot.Name.Equals("Upecito Bot"))
+                    {
+                        var dialog = container.GetInstance<RootDialog>();
+                        await Conversation.SendAsync(message, () => dialog);
+                    }
+                }
 
-                //if (message.MembersRemoved.Count > 1)
-                //    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
+                if (message.MembersRemoved.Count > 1)
+                    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
@@ -104,6 +104,15 @@ namespace Microsoft.Bot.Sample.FormBot
             }
             else if (message.Type == ActivityTypes.Ping)
             {
+            }
+            else if (message.Type == ActivityTypes.ContactRelationUpdate)
+            {
+                if (message.Action == "add")
+                {
+                    var reply = message.CreateReply("WELCOME!!!");
+                    ConnectorClient connector = new ConnectorClient(new Uri(message.ServiceUrl));
+                    await connector.Conversations.ReplyToActivityAsync(reply);
+                }
             }
         }
     }
