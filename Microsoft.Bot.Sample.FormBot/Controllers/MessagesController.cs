@@ -58,8 +58,8 @@ namespace Microsoft.Bot.Sample.FormBot
             // DEMO PURPOSE: echo all incoming activities
             Activity reply = activity.CreateReply(Newtonsoft.Json.JsonConvert.SerializeObject(activity, Newtonsoft.Json.Formatting.None));
 
-            var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            connector.Conversations.SendToConversation(reply);
+            //var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
+            //connector.Conversations.SendToConversation(reply);
 
             // Process each activity
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
