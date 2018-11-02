@@ -7,6 +7,8 @@ namespace FormBot
 {
     public static class AppConstant
     {
+        public const string ProjectId = "upc-chatbot";
+
         public static class Intencion
         {
             public const string ASISTENCIA = "Asistencia";

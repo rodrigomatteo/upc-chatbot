@@ -9,6 +9,7 @@ using System.Net;
 using SimpleInjector;
 using FormBot.Dialogs;
 using System;
+using FormBot;
 
 namespace Microsoft.Bot.Sample.FormBot
 {
@@ -45,22 +46,10 @@ namespace Microsoft.Bot.Sample.FormBot
         {
             var response = Request.CreateResponse(System.Net.HttpStatusCode.OK);
 
-            //var reply = activity.CreateReply("message.Type: " + activity.Type);
-            //ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            //await connector.Conversations.ReplyToActivityAsync(reply);
-
-            if (activity.Type == ActivityTypes.Message || activity.Type == ActivityTypes.ConversationUpdate)
+            if (activity.Type == ActivityTypes.Message)
             {
-                // Because ConversationUpdate activity is received twice 
-                // (once for the Bot being added to the conversation, and the 2nd time - 
-                // for the user), we have to filter one out, if we don't want the dialog 
-                // to get started twice. Otherwise the user will receive a duplicate message.
-                //if (activity.Type == ActivityTypes.ConversationUpdate &&
-                //   !activity.MembersAdded.Any(r => r.Name == "Bot"))
-                //    return response;
-
                 // start your root dialog here
-                await Microsoft.Bot.Builder.Dialogs.Conversation.SendAsync(activity, () =>  new WelcomeDialog());
+                //await Microsoft.Bot.Builder.Dialogs.Conversation.SendAsync(activity, () =>  new WelcomeDialog());
             }
             // handle other types of activity here (other than Message and ConversationUpdate 
             // activity types)
@@ -81,7 +70,33 @@ namespace Microsoft.Bot.Sample.FormBot
             }
             else if (message.Type == ActivityTypes.ConversationUpdate)
             {
-                //  
+                if (message.MembersAdded != null && message.MembersAdded.Any())
+                {
+                    foreach (var newMember in message.MembersAdded)
+                    {
+                        if (newMember.Name == AppConstant.ProjectId)
+                        {
+                            IMessageActivity greetingMessage = Activity.CreateMessageActivity();
+
+                            //...
+                            //your code logic
+                            //...
+
+                            IMessageActivity dialogEntryMessage = Activity.CreateMessageActivity();
+                            dialogEntryMessage.Recipient = message.Recipient;//to bot
+                            dialogEntryMessage.From = message.From;//from user
+                            dialogEntryMessage.Conversation = message.Conversation;
+                            dialogEntryMessage.Text = "show choices";
+                            dialogEntryMessage.Locale = "en-us";
+                            dialogEntryMessage.ChannelId = message.ChannelId;
+                            dialogEntryMessage.ServiceUrl = message.ServiceUrl;
+                            dialogEntryMessage.Id = System.Guid.NewGuid().ToString();
+                            dialogEntryMessage.ReplyToId = greetingMessage.Id;
+
+                            await Conversation.SendAsync(dialogEntryMessage, () => new WelcomeDialog());
+                        }
+                    }
+                }
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
