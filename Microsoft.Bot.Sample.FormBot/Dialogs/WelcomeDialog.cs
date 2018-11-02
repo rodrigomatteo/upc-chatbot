@@ -32,8 +32,7 @@ namespace FormBot.Dialogs
 
             if (sesionData == null)
             {
-                context.Done(true);
-                return;
+                context.Call(new CerrarSesionDialog(), ResumeWelcome);
             }
 
             context.UserData.SetValue("sesion", sesionData);

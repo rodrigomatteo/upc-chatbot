@@ -91,6 +91,12 @@ namespace Microsoft.Bot.Sample.FormBot
             }
             else if (message.Type == ActivityTypes.Ping)
             {
+            }
+            else
+            {
+                var reply = message.CreateReply("message.Type: " + message.Type);
+                ConnectorClient connector = new ConnectorClient(new Uri(message.ServiceUrl));
+                await connector.Conversations.ReplyToActivityAsync(reply);
             }            
         }
     }
