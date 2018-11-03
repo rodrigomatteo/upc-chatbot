@@ -74,7 +74,7 @@ namespace Microsoft.Bot.Sample.FormBot
                 {
                     foreach (var newMember in message.MembersAdded)
                     {
-                        if (newMember.Name == AppConstant.ProjectId)
+                        if (newMember.Name == "Bot")
                         {
                             IMessageActivity greetingMessage = Activity.CreateMessageActivity();
 
@@ -93,7 +93,7 @@ namespace Microsoft.Bot.Sample.FormBot
                             dialogEntryMessage.Id = System.Guid.NewGuid().ToString();
                             dialogEntryMessage.ReplyToId = greetingMessage.Id;
 
-                            await Conversation.SendAsync(dialogEntryMessage, () => new WelcomeDialog());
+                            Conversation.SendAsync(dialogEntryMessage, () => new WelcomeDialog());
                         }
                     }
                 }

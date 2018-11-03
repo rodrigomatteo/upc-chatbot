@@ -7,6 +7,7 @@ using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
 using Upecito.Interface;
 using FormBot.Util;
+using Microsoft.Bot.Connector;
 
 namespace FormBot.Dialogs
 {
@@ -39,6 +40,8 @@ namespace FormBot.Dialogs
                         var message_ = context.MakeMessage();
                         message.Text = "No se pudo realizar la conexión con el servidor";
                         context.PostAsync(message_);
+
+                        context.Wait(this.MessageReceived);
                     }
                     else
                     {
@@ -52,6 +55,20 @@ namespace FormBot.Dialogs
 
             }
             return Task.CompletedTask;
+        }
+
+        private async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var message = await result;
+
+            if ((message.Text != null) && (message.Text.Trim().Length > 0))
+            {
+                context.Done<object>(null);
+            }
+            else
+            {
+                context.Fail(new Exception("Message was not a string or was an empty string."));
+            }
         }
 
         private async Task ResumeWelcome(IDialogContext context, IAwaitable<object> result)
