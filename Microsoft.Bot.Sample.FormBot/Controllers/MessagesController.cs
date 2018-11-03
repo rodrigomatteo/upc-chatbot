@@ -74,7 +74,7 @@ namespace Microsoft.Bot.Sample.FormBot
                 {
                     foreach (var newMember in message.MembersAdded)
                     {
-                        if (newMember.Name == "Bot")
+                        if (newMember.Name == "upc-chatbot")
                         {
                             IMessageActivity greetingMessage = Activity.CreateMessageActivity();
 
@@ -87,7 +87,7 @@ namespace Microsoft.Bot.Sample.FormBot
                             dialogEntryMessage.From = message.From;//from user
                             dialogEntryMessage.Conversation = message.Conversation;
                             dialogEntryMessage.Text = "show choices";
-                            dialogEntryMessage.Locale = "en-us";
+                            dialogEntryMessage.Locale = "es-es";
                             dialogEntryMessage.ChannelId = message.ChannelId;
                             dialogEntryMessage.ServiceUrl = message.ServiceUrl;
                             dialogEntryMessage.Id = System.Guid.NewGuid().ToString();
