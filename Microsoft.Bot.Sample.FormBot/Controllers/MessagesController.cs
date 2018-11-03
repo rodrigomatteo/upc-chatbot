@@ -74,7 +74,7 @@ namespace Microsoft.Bot.Sample.FormBot
                 {
                     foreach (var newMember in message.MembersAdded)
                     {
-                        if (newMember.Name == "Bot")
+                        if (newMember.Name == "upc-chatbot")
                         {
                             IMessageActivity greetingMessage = Activity.CreateMessageActivity();
 
