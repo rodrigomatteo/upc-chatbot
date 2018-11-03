@@ -120,7 +120,7 @@ namespace FormBot.Dialogs
 
             var message = context.MakeMessage();
             var strMessage = $"Hola {userName}, soy UPECITO el asesor del Aula Virtual de UPC.Te puedo ayudar con tus consultas académicas y Técnicas del Aula Virtual.";
-            //await context.PostAsync(message);
+            await context.PostAsync(message);
 
             var initialText = activity.Text.ToLower();
 
