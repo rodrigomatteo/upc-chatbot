@@ -93,7 +93,7 @@ namespace Microsoft.Bot.Sample.FormBot
                             dialogEntryMessage.Id = System.Guid.NewGuid().ToString();
                             dialogEntryMessage.ReplyToId = greetingMessage.Id;
 
-                            Conversation.SendAsync(dialogEntryMessage, () => new WelcomeDialog());
+                            await Conversation.SendAsync(dialogEntryMessage, () => new WelcomeDialog());
                         }
                     }
                 }
