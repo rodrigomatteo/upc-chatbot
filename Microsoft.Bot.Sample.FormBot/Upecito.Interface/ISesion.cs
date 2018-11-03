@@ -8,6 +8,6 @@ namespace Upecito.Interface
     public interface ISesion
     {
         Sesion CrearSesion(long idUsuario);
-        Sesion CerrarSesion(long idSesion);
+        Sesion CerrarSesion(long idSesion);        
     }
 }

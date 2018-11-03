@@ -14,45 +14,41 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 {
     public class IntencionData : BaseData, IIntencionData
     {
-        public Intencion BuscarIntencionConsulta(string intencion)
+        public Intencion BuscarIntencionConsulta(string nombreIntencion)
         {
-            var categoria = new Intencion();
+            var intencion = new Intencion();
 
             try
             {
-                //var cnxOracle = ConfigurationManager.ConnectionStrings[ConnectionName].ToString();
+                using (var cnn = MSSQLSERVERCnx.MSSqlCnx())
+                {
+                    SqlCommand cmd = null;
+                    cnn.Open();
 
-                //using (var oCnn = new OracleConnection(cnxOracle))
-                //{
-                //    OracleCommand oCmd = null;
-                //    oCnn.Open();
-                //    oCmd = new OracleCommand("SP_BUSCARINTENCIONCONSULTA", oCnn);
-                //    oCmd.CommandType = CommandType.StoredProcedure;
-                //    oCmd.Parameters.Add(new OracleParameter("pIntencion", OracleDbType.Varchar2)).Value = intencion;
-                //    oCmd.Parameters.Add(new OracleParameter("RESULTADO", OracleDbType.RefCursor)).Direction = ParameterDirection.Output;
-                //    var rd = oCmd.ExecuteReader();
-                //    if (rd.HasRows)
-                //    {
-                //        if (rd.Read())
-                //        {
-                //            categoria = new Intencion()
-                //            {
-                //                IdIntencion = rd.GetInt32(rd.GetOrdinal("IDINTENCIONCONSULTA")),
-                //                Nombre = rd.GetString(rd.GetOrdinal("NOMBRE"))
-                //            };
-                //        }
-                //    }
+                    cmd = new SqlCommand(SP.GSAV_SP_BUSCARINTENCIONCONSULTA, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmd.Parameters.AddWithValue("@P_INTENCION_NOMBRE", nombreIntencion);
 
-                //}
+                    SqlDataReader rd = cmd.ExecuteReader();
 
-                return categoria;
+                    if (rd.HasRows)
+                    {
+                        if (rd.Read())
+                        {
+                            intencion.IdIntencion = rd.GetInt32(rd.GetOrdinal("IDINTENCIONCONSULTA"));
+                            intencion.Nombre = rd.GetString(rd.GetOrdinal("INTENCION_BASE"));                          
+                        }
+                    }
+                }
             }
             catch (Exception)
             {
                 //LogError(ex);
             }
 
-            return null;
+            return intencion;
         }
     }
 }

@@ -12,5 +12,6 @@ namespace Upecito.Data.Common
         public static string GSAV_SP_CERRARSESION = "GSAV.SP_CERRARSESION";
         public static string GSAV_SP_CREARSOLICITUD = "GSAV.SP_CREARSOLICITUD";
         public static string GSAV_SP_ACTUALIZARSOLICITUD = "GSAV.SP_ACTUALIZARSOLICITUD";
+        public static string GSAV_SP_BUSCARINTENCIONCONSULTA = "GSAV.SP_BUSCARINTENCIONCONSULTA";
     }
 }

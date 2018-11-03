@@ -11,6 +11,7 @@ using Upecito.Business;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
 using Upecito.Model;
+using FormBot.Dialogflow;
 
 namespace FormBot.Dialogs
 {
@@ -19,7 +20,7 @@ namespace FormBot.Dialogs
     {
         private enum Selection
         {
-            Academic, Technical
+            Consultas_Academicas, Consultas_Tecnicas
         }
 
         public Task StartAsync(IDialogContext context)
@@ -32,16 +33,17 @@ namespace FormBot.Dialogs
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<Selection> result)
         {
             var optionSelected = await result;
+            var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
 
             switch (optionSelected)
             {
-                case Selection.Academic:
-                    var userName = context.Activity.From.Name;
+                case Selection.Consultas_Academicas:
+                    context.UserData.SetValue("tipo-consulta", AppConstant.CanalAtencion.ConsultasAcademicas);                    
                     PromptDialog.Text(context, ResumeGetAcademicIntent, $"Por favor {userName}, dime tu consulta sobre Consultas Académicas", "Intenta de nuevo");
                     break;
-                case Selection.Technical:
-                    await context.PostAsync("Seleccionaste consulta tecnica");
-                    ShowPrompt(context);
+                case Selection.Consultas_Tecnicas:
+                    context.UserData.SetValue("tipo-consulta", AppConstant.CanalAtencion.ConsultasTecnicas);                   
+                    PromptDialog.Text(context, ResumeGetAcademicIntent, $"Por favor {userName}, dime tu consulta sobre Consultas Ténicas", "Intenta de nuevo");
                     break;
             }
         }
@@ -60,8 +62,9 @@ namespace FormBot.Dialogs
         {
             var activity = context.Activity as Activity;
 
-            //var userId = Convert.ToInt32(context.Activity.From.Id);
             var userId = context.UserData.GetValue<Sesion>("sesion").IdAlumno;
+            var codigoAlumno = context.UserData.GetValue<Sesion>("sesion").CodigoAlumno;
+            var tipoConsulta = context.UserData.GetValue<string>("tipo-consulta");
 
             /*
              * 4.1.4   El Sistema crea una nueva Solicitud Académica con los datos indicados líneas abajo
@@ -69,10 +72,10 @@ namespace FormBot.Dialogs
             */
             var container = new Container();
             DependencyResolver.UnityConfig.RegisterTypes(container);
-
            
             var solicitudManager = container.GetInstance<ISolicitud>();
-            var solicitud = solicitudManager.CrearSolicitud(1, userId, null, activity.Text, "");
+            var solicitud = solicitudManager.CrearSolicitud(Convert.ToInt32(tipoConsulta), userId, null, activity.Text, codigoAlumno);
+
             context.UserData.SetValue("solicitud", solicitud);
 
             var handler = container.GetInstance<DialogEngine>();
@@ -97,7 +100,7 @@ namespace FormBot.Dialogs
 
                     context.UserData.SetValue<Result>("result", receivedResult);
 
-                    if (intencion != null && intencion.Nombre != string.Empty)
+                    if (!string.IsNullOrEmpty(intencion.Nombre))
                     {
                         switch (intencion.Nombre)
                         {
@@ -153,7 +156,7 @@ namespace FormBot.Dialogs
                     }
                     else
                     {
-                        var userName = context.Activity.From.Name;
+                        var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
                         var message = context.MakeMessage();
                         message.Text = $"{userName}, no he podido registrar tu solicitud o la intención no se ha encontrado";
 
@@ -223,7 +226,7 @@ namespace FormBot.Dialogs
 
             // 4.1.14  El caso de uso finaliza
             await Task.Delay(2000);
-            ShowPrompt(context);
+            //ShowPrompt(context);
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
@@ -231,18 +234,9 @@ namespace FormBot.Dialogs
             await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
         }
 
-        private void ShowPrompt(IDialogContext context)
-        {
-            var options = new[] { Selection.Academic, Selection.Technical };
-            var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
-
-            PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);
-
-        }
-
         private Task ShowPrompt(IDialogContext context, IAwaitable<object> result)
         {
-            var options = new[] { Selection.Academic, Selection.Technical };
+            var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
             var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
 
             PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);

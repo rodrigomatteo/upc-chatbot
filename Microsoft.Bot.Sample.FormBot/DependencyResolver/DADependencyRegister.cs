@@ -11,6 +11,7 @@ using Upecito.Business;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
 using Upecito.Model;
+using FormBot.Dialogflow;
 
 namespace FormBot.DependencyResolver
 {

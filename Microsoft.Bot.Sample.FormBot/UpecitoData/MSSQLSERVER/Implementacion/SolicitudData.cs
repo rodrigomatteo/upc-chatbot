@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FormBot.Util;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -34,6 +35,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pSolucion", solucion);
                     cmd.Parameters.AddWithValue("@pEstado", estado);
                     cmd.Parameters.AddWithValue("@pUsuario", usuario);
+                    cmd.Parameters.AddWithValue("@pFechaActualiza", ConvertidorUtil.GmtToPacific(DateTime.Now));
 
                     SqlDataReader rd = cmd.ExecuteReader();
 
@@ -84,6 +86,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pIdCurso", idCurso);
                     cmd.Parameters.AddWithValue("@pConsulta", consulta);
                     cmd.Parameters.AddWithValue("@pUsuario", usuario);
+                    cmd.Parameters.AddWithValue("@pFechaCreacion", ConvertidorUtil.GmtToPacific(DateTime.Now));
 
                     SqlDataReader rd = cmd.ExecuteReader();
 

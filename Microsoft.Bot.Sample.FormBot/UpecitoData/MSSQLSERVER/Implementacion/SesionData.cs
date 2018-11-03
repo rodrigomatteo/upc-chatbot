@@ -39,6 +39,10 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                         {
                             sesion.IdSesion = Convert.ToInt64(rd.GetDecimal(rd.GetOrdinal("ID_SESSION")));
                             sesion.IdAlumno = idAlumno;
+                            sesion.Nombre = rd.GetString(rd.GetOrdinal("NOMBRE"));
+                            sesion.ApePaterno = rd.GetString(rd.GetOrdinal("APELLIDOPAT"));
+                            sesion.ApeMaterno = rd.GetString(rd.GetOrdinal("APELLIDOMAT"));
+                            sesion.CodigoAlumno = rd.GetString(rd.GetOrdinal("CODIGOALUMNO"));
                             sesion.FechaInicio = DateTime.Now;
                         }
                     }

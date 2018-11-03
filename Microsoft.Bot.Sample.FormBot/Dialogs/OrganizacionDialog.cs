@@ -9,7 +9,7 @@ namespace FormBot.Dialogs
 
         protected override void MostrarRespuesta(IDialogContext context, Result resultado)
         {
-            var userName = context.Activity.From.Name;
+            var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
 
             resultado.Speech = $"{userName} {RESPUESTA}";
             base.MostrarRespuesta(context, resultado);

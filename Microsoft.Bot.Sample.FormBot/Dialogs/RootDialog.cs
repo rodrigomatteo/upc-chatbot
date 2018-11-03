@@ -11,8 +11,7 @@ namespace FormBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        //private static bool showed = false;
-
+        
         public async Task StartAsync(IDialogContext context)
         {
             var message = context.MakeMessage();

@@ -12,7 +12,6 @@ namespace FormBot.Dialogs
         {
             var resultado = ObtenerRespuesta(context);
             MostrarRespuesta(context, resultado);
-
             context.Done(true);
         }
 
