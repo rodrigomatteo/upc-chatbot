@@ -120,25 +120,19 @@ namespace FormBot.Dialogs
 
             var message = context.MakeMessage();
             var strMessage = $"Hola {userName}, soy UPECITO el asesor del Aula Virtual de UPC.Te puedo ayudar con tus consultas académicas y Técnicas del Aula Virtual.";
-            //await context.PostAsync(message);
-
-
+            
             var initialText = activity.Text.ToLower();
 
             string[] choices = new string[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
 
             await context.PostAsync(strMessage);
-            context.Wait(MessageReceivedAsync);
-
+            
             if (initialText == "start-upecito-bot")
             {
                 var options = new[] { Selection.Academic, Selection.Technical };
                 var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
 
-                PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);
-
-
-                //PromptDialog.Choice(context, resumeAfterPrompt, choices, strMessage);
+                PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);               
             }
             else
             {

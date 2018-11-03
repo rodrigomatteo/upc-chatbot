@@ -79,14 +79,14 @@ namespace Microsoft.Bot.Sample.FormBot
                             IMessageActivity greetingMessage = Activity.CreateMessageActivity();
                                                        
                             IMessageActivity dialogEntryMessage = Activity.CreateMessageActivity();
-                            dialogEntryMessage.Recipient = message.Recipient;//to bot
-                            dialogEntryMessage.From = message.From;//from user
+                            dialogEntryMessage.Recipient = message.Recipient;
+                            dialogEntryMessage.From = message.From;
                             dialogEntryMessage.Conversation = message.Conversation;
                             dialogEntryMessage.Text = "start-upecito-bot";
                             dialogEntryMessage.Locale = "es-es";
                             dialogEntryMessage.ChannelId = message.ChannelId;
                             dialogEntryMessage.ServiceUrl = message.ServiceUrl;
-                            dialogEntryMessage.Id = System.Guid.NewGuid().ToString();
+                            dialogEntryMessage.Id = System.Guid.NewGuid().ToString();                            
                             dialogEntryMessage.ReplyToId = greetingMessage.Id;
 
                             await Conversation.SendAsync(dialogEntryMessage, () => new WelcomeDialog());
