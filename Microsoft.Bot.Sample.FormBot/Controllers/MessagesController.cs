@@ -77,16 +77,12 @@ namespace Microsoft.Bot.Sample.FormBot
                         if (newMember.Name == "upc-chatbot")
                         {
                             IMessageActivity greetingMessage = Activity.CreateMessageActivity();
-
-                            //...
-                            //your code logic
-                            //...
-
+                                                       
                             IMessageActivity dialogEntryMessage = Activity.CreateMessageActivity();
                             dialogEntryMessage.Recipient = message.Recipient;//to bot
                             dialogEntryMessage.From = message.From;//from user
                             dialogEntryMessage.Conversation = message.Conversation;
-                            dialogEntryMessage.Text = "show choices";
+                            dialogEntryMessage.Text = "start-upecito-bot";
                             dialogEntryMessage.Locale = "es-es";
                             dialogEntryMessage.ChannelId = message.ChannelId;
                             dialogEntryMessage.ServiceUrl = message.ServiceUrl;
