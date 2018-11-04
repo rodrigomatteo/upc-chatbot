@@ -66,12 +66,12 @@ namespace Microsoft.Bot.Sample.FormBot
 
                 if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
                 {
-                    var bot = message.MembersAdded.FirstOrDefault();
-                    //if (bot != null && bot.Name.Equals("Bot"))
-                    if (bot != null && bot.Name.Equals(AppConstant.DialogFlow.ProjectId))
-                    {
-                        await Conversation.SendAsync(message, () => new WelcomeDialog());
-                    }
+                    //var bot = message.MembersAdded.FirstOrDefault();
+                    ////if (bot != null && bot.Name.Equals("Bot"))
+                    //if (bot != null && bot.Name.Equals(AppConstant.DialogFlow.ProjectId))
+                    //{
+                    //    await Conversation.SendAsync(message, () => new WelcomeDialog());
+                    //}
                 }
 
                 //if (message.MembersRemoved.Count > 1)
