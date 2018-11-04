@@ -23,13 +23,13 @@ namespace FormBot.Dialogs
 
             //context.Wait(ShowStartButton); 
 
-            PromptDialog.Choice(
-                context: context,
-                resume: ChoiceReceivedAsync,
-                options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
-                prompt: "Presiona el botón para iniciar",
-                retry: "Por favor intenta de nuevo"
-            );
+            //PromptDialog.Choice(
+            //    context: context,
+            //    resume: ChoiceReceivedAsync,
+            //    options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
+            //    prompt: "Presiona el botón para iniciar",
+            //    retry: "Por favor intenta de nuevo"
+            //);
         }
 
         public enum StartOptions
