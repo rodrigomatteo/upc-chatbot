@@ -39,6 +39,16 @@ namespace Microsoft.Bot.Sample.FormBot
         [ResponseType(typeof(void))]
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
+            if (activity.Type == ActivityTypes.Event)
+            {
+                IEventActivity eventActivity = activity.AsEventActivity();
+                if (eventActivity.Name == "ConversationUpdate")
+                {
+                    await Conversation.SendAsync(activity, () => new WelcomeDialog());
+                }
+            }
+
+
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
             {
                 await Conversation.SendAsync(activity, () => new WelcomeDialog());
@@ -63,7 +73,7 @@ namespace Microsoft.Bot.Sample.FormBot
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
-               
+
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
