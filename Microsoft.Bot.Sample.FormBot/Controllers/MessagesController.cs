@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using System.Web.Http;
-
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
 using System.Web.Http.Description;
@@ -9,7 +8,8 @@ using System.Linq;
 using System.Net;
 using SimpleInjector;
 using FormBot.Dialogs;
-
+using FormBot;
+using System;
 
 namespace Microsoft.Bot.Sample.FormBot
 {
@@ -36,23 +36,7 @@ namespace Microsoft.Bot.Sample.FormBot
 
         #endregion
 
-        /// <summary>
-        /// POST: api/Messages
-        /// receive a message from a user and send replies
-        /// </summary>
-        /// <param name="activity"></param>
-        //[ResponseType(typeof(void))]
-        //public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
-        //{
-        //    // check if activity is of type message
-        //    if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
-        //        await Conversation.SendAsync(activity, () => new WelcomeDialog());
-        //    else
-        //        HandleSystemMessage(activity);
-
-        //    return new HttpResponseMessage(HttpStatusCode.Accepted);
-        //}
-
+        [ResponseType(typeof(void))]
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
@@ -80,15 +64,15 @@ namespace Microsoft.Bot.Sample.FormBot
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
 
-                //if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
-                //{
-                //    var bot = message.MembersAdded.FirstOrDefault();
-                //    if (bot != null && bot.Name.Equals("Upecito Bot"))
-                //    {
-                //        var dialog = container.GetInstance<RootDialog>();
-                //        await Conversation.SendAsync(message, () => dialog);
-                //    }
-                //}
+                if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
+                {
+                    var bot = message.MembersAdded.FirstOrDefault();
+                    //if (bot != null && bot.Name.Equals("Bot"))
+                    if (bot != null && bot.Name.Equals(AppConstant.DialogFlow.ProjectId))
+                    {
+                        await Conversation.SendAsync(message, () => new WelcomeDialog());
+                    }
+                }
 
                 //if (message.MembersRemoved.Count > 1)
                 //    await Conversation.SendAsync(message, () => new CerrarSesionDialog());

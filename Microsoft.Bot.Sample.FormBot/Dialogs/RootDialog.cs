@@ -5,6 +5,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using SimpleInjector;
 using Upecito.Data.Interface;
+using Upecito.Model;
 
 namespace FormBot.Dialogs
 {
@@ -13,14 +14,14 @@ namespace FormBot.Dialogs
     {
         
         public async Task StartAsync(IDialogContext context)
-        {
+        {            
             var message = context.MakeMessage();
             var attachment = GetInfoCard();
-
             message.Attachments.Add(attachment);
+
             await context.PostAsync(message);
 
-            context.Wait(ShowStartButton);
+            context.Wait(ShowStartButton); 
         }
 
         public enum StartOptions
@@ -42,6 +43,9 @@ namespace FormBot.Dialogs
         public virtual async Task ChoiceReceivedAsync(IDialogContext context, IAwaitable<StartOptions> activity)
         {
             context.Call<object>(new WelcomeDialog(), ChildDialogComplete);
+
+            var message_ = context.MakeMessage();
+            await Conversation.SendAsync(message_, () => new WelcomeDialog());
         }
 
         public virtual async Task ChildDialogComplete(IDialogContext context, IAwaitable<object> response)

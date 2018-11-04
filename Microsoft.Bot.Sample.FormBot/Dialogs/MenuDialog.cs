@@ -23,11 +23,9 @@ namespace FormBot.Dialogs
             Consultas_Academicas, Consultas_Tecnicas
         }
 
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(ShowPrompt);
-
-            return Task.CompletedTask;
+            context.Wait(ShowPrompt);            
         }
 
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<Selection> result)
@@ -234,14 +232,19 @@ namespace FormBot.Dialogs
             await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
         }
 
-        private Task ShowPrompt(IDialogContext context, IAwaitable<object> result)
+        public virtual async Task ShowPrompt(IDialogContext context, IAwaitable<object> result)
         {
             var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
             var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
 
-            PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);
-
-            return Task.CompletedTask;
+            PromptDialog.Choice(
+               context: context,
+               resume: OnOptionSelected,
+               options: options,
+               descriptions: descriptions,
+               prompt: "Selecciona el canal de atención en el que requieres ayuda",
+               retry: "Por favor intenta de nuevo"
+           );          
 
         }
     }

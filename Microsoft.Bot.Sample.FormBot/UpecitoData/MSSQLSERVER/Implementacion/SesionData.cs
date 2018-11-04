@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FormBot.Util;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -19,6 +20,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             try
             {
                 var sesion = new Sesion();
+                var dateTimeNow = ConvertidorUtil.GmtToPacific(DateTime.Now);
 
                 using (var cnn = MSSQLSERVERCnx.MSSqlCnx())
                 {
@@ -30,6 +32,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                         CommandType = CommandType.StoredProcedure
                     };
                     cmd.Parameters.AddWithValue("@pIdAlumno", idAlumno);
+                    cmd.Parameters.AddWithValue("@pFechaCreacion", dateTimeNow);
 
                     SqlDataReader rd = cmd.ExecuteReader();
 
@@ -43,7 +46,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                             sesion.ApePaterno = rd.GetString(rd.GetOrdinal("APELLIDOPAT"));
                             sesion.ApeMaterno = rd.GetString(rd.GetOrdinal("APELLIDOMAT"));
                             sesion.CodigoAlumno = rd.GetString(rd.GetOrdinal("CODIGOALUMNO"));
-                            sesion.FechaInicio = DateTime.Now;
+                            sesion.FechaInicio = dateTimeNow;
                         }
                     }
                 }
