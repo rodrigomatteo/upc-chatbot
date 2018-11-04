@@ -63,19 +63,7 @@ namespace Microsoft.Bot.Sample.FormBot
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
-
-                if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
-                {
-                    //var bot = message.MembersAdded.FirstOrDefault();
-                    ////if (bot != null && bot.Name.Equals("Bot"))
-                    //if (bot != null && bot.Name.Equals(AppConstant.DialogFlow.ProjectId))
-                    //{
-                    //    await Conversation.SendAsync(message, () => new WelcomeDialog());
-                    //}
-                }
-
-                //if (message.MembersRemoved.Count > 1)
-                //    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
+               
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
