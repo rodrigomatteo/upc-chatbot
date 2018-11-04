@@ -40,8 +40,8 @@ namespace Microsoft.Bot.Sample.FormBot
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
-            {               
-                await Conversation.SendAsync(activity, () => new WelcomeDialog());                              
+            {
+                await Conversation.SendAsync(activity, () => new WelcomeDialog());
             }
             else
             {
@@ -65,15 +65,15 @@ namespace Microsoft.Bot.Sample.FormBot
                 // Not available in all channels
                 if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
                 {
-                    //var bot = message.MembersAdded.FirstOrDefault();
+                    var bot = message.MembersAdded.FirstOrDefault();
                     //if (bot != null && bot.Name.Equals("Bot"))
-                    //if (bot != null && bot.Name.Equals("upecito"))
-                    //{
-                    //    await Conversation.SendAsync(message, () => new RootDialog());
-                    //}
+                    if (bot != null && bot.Name.Equals("upecito"))
+                    {
+                        await Conversation.SendAsync(message, () => new RootDialog());
+                    }
 
-                    //if (message.MembersRemoved !=null && message.MembersRemoved.Count > 1)
-                    //    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
+                    if (message.MembersRemoved != null && message.MembersRemoved.Count > 1)
+                        await Conversation.SendAsync(message, () => new CerrarSesionDialog());
                 }
 
             }
