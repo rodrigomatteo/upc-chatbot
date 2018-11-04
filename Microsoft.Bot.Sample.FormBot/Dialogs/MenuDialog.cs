@@ -168,8 +168,9 @@ namespace FormBot.Dialogs
                     {
                         var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
                         var message = context.MakeMessage();
-                        message.Text = $"{userName}, no he podido registrar tu solicitud o la intención no se ha encontrado";
-
+                        //message.Text = $"{userName}, no he podido registrar tu solicitud o la intención no se ha encontrado";
+                        message.Text = $"Uhmmm... { userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas. Por aquí puedo ayudarte con tus consultas sobre los siguientes temas";
+                        
                         await context.PostAsync(message);
                         context.Wait(ResumeGetAcademicIntent);
                     }
