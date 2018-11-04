@@ -26,10 +26,8 @@ namespace FormBot.Dialogs
         protected virtual void MostrarRespuesta(IDialogContext context, Result resultado)
         {
             var activity = context.Activity as Activity;
-            var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            var userName = context.Activity.From.Name;
-            var reply = activity.CreateReply(resultado.Speech.Replace("<<USUARIO>>", userName));
-
+            var connector = new ConnectorClient(new Uri(activity.ServiceUrl));         
+            var reply = activity.CreateReply(resultado.Speech);
             connector.Conversations.ReplyToActivityAsync(reply);
         }
     }

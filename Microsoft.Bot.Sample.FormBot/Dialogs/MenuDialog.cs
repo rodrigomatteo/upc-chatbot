@@ -206,7 +206,7 @@ namespace FormBot.Dialogs
              * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
              */
             var solicitud = context.UserData.GetValue<Solicitud>("solicitud");
-            var userName = context.Activity.From.Name;
+            var userName = context.UserData.GetValue<Sesion>("sesion").UserName;
             Result receivedResult;
             context.UserData.TryGetValue<Result>("result", out receivedResult);
             solicitudManager.Actualizar(solicitud.IdSolicitud, null, string.Empty, AppConstant.EstadoSolicitud.ATENDIDO, userName);
@@ -229,7 +229,8 @@ namespace FormBot.Dialogs
              * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
              */
             var solicitud = context.UserData.GetValueOrDefault<Solicitud>("solicitud");
-            var userName = context.Activity.From.Name;
+
+            var userName = context.UserData.GetValue<Sesion>("sesion").UserName;
             var receivedResult = context.UserData.GetValueOrDefault<Result>("result");
 
             if (solicitud != null && receivedResult != null)
