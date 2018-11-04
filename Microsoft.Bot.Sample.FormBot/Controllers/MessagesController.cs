@@ -40,15 +40,15 @@ namespace Microsoft.Bot.Sample.FormBot
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
-            {
-                await Conversation.SendAsync(activity, () => new WelcomeDialog());
+            {               
+                await Conversation.SendAsync(activity, () => new WelcomeDialog());                              
             }
             else
             {
                 HandleSystemMessage(activity);
             }
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            return response;
+
+            return new HttpResponseMessage(HttpStatusCode.Accepted);
         }
 
         private async void HandleSystemMessage(Activity message)
@@ -71,6 +71,9 @@ namespace Microsoft.Bot.Sample.FormBot
                     {
                         await Conversation.SendAsync(message, () => new RootDialog());
                     }
+
+                    if (message.MembersRemoved !=null && message.MembersRemoved.Count > 1)
+                        await Conversation.SendAsync(message, () => new CerrarSesionDialog());
                 }
 
             }

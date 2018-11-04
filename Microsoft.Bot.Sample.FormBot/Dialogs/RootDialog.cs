@@ -43,9 +43,6 @@ namespace FormBot.Dialogs
         public virtual async Task ChoiceReceivedAsync(IDialogContext context, IAwaitable<StartOptions> activity)
         {
             context.Call<object>(new WelcomeDialog(), ChildDialogComplete);
-
-            var message_ = context.MakeMessage();
-            await Conversation.SendAsync(message_, () => new WelcomeDialog());
         }
 
         public virtual async Task ChildDialogComplete(IDialogContext context, IAwaitable<object> response)
