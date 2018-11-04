@@ -67,10 +67,10 @@ namespace Microsoft.Bot.Sample.FormBot
                 {
                     var bot = message.MembersAdded.FirstOrDefault();
                     //if (bot != null && bot.Name.Equals("Bot"))
-                    //if (bot != null && bot.Name.Equals("upecito"))
-                    //{
-                    //    await Conversation.SendAsync(message, () => new RootDialog());
-                    //}
+                    if (bot != null && bot.Name.Equals("upecito"))
+                    {
+                        await Conversation.SendAsync(message, () => new RootDialog());
+                    }
 
                     //if (message.MembersRemoved !=null && message.MembersRemoved.Count > 1)
                     //    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
