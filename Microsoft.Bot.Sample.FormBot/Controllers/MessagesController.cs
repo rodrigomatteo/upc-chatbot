@@ -67,7 +67,7 @@ namespace Microsoft.Bot.Sample.FormBot
                 {
                     var bot = message.MembersAdded.FirstOrDefault();
                     //if (bot != null && bot.Name.Equals("Bot"))
-                    if (bot != null && bot.Name.Equals(AppConstant.DialogFlow.ProjectId))
+                    if (bot != null && bot.Name.Equals("upecito"))
                     {
                         await Conversation.SendAsync(message, () => new WelcomeDialog());
                     }
