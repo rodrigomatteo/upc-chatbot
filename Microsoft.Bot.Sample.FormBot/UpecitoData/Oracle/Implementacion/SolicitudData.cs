@@ -12,7 +12,7 @@ namespace Upecito.Data.Oracle.Implementacion
 {
     public class SolicitudData : BaseData, ISolicitudData
     {
-        public Solicitud Crear(int idCanalAtencion, long idAlumno, int? idCurso, string consulta, string usuario)
+        public Solicitud Crear(int idCanalAtencion, long idAlumno, int? idCurso, long? idSesion, string consulta, string usuario)
         {
 
             var solicitud_ = new Solicitud();
@@ -31,6 +31,7 @@ namespace Upecito.Data.Oracle.Implementacion
                     oCmd.Parameters.Add(new OracleParameter("pIdCanalAtencion", OracleDbType.Int32)).Value = idCanalAtencion;
                     oCmd.Parameters.Add(new OracleParameter("pIdAlumno", OracleDbType.Int64)).Value = idAlumno;
                     oCmd.Parameters.Add(new OracleParameter("pIdCurso", OracleDbType.Int64)).Value = idCurso;
+                    oCmd.Parameters.Add(new OracleParameter("pIdSesion", OracleDbType.Int64)).Value = idSesion;
                     oCmd.Parameters.Add(new OracleParameter("pConsulta", OracleDbType.Varchar2)).Value = consulta;
                     oCmd.Parameters.Add(new OracleParameter("pUsuario", OracleDbType.Varchar2)).Value = usuario;
                     oCmd.Parameters.Add(new OracleParameter("P_RC", OracleDbType.RefCursor)).Direction = ParameterDirection.Output;
