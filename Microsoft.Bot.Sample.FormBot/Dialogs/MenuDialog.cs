@@ -110,6 +110,7 @@ namespace FormBot.Dialogs
                     var intencion = intencionManager.ObtenerCategoria(intent);
 
                     context.UserData.SetValue<Result>("result", receivedResult);
+                    context.UserData.SetValue<Intencion>("intencion", intencion);
 
                     if (!string.IsNullOrEmpty(intencion.Nombre))
                     {
@@ -169,10 +170,11 @@ namespace FormBot.Dialogs
                     {
                         var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
                         var message = context.MakeMessage();
-                        //message.Text = $"{userName}, no he podido registrar tu solicitud o la intención no se ha encontrado";
-                        message.Text = $"Uhmmm... { userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas. Por aquí puedo ayudarte con tus consultas sobre los siguientes temas";
+                        message.Text = $"Uhmmm... {userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas. Por aquí puedo ayudarte con tus consultas sobre los siguientes temas";
                         
                         await context.PostAsync(message);
+                        ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
+
                         context.Wait(ResumeGetAcademicIntent);
                     }
                 }
@@ -194,47 +196,14 @@ namespace FormBot.Dialogs
 
         private async Task ResumeAfterSuccessAcademicIntent(IDialogContext context, IAwaitable<object> result)
         {
-            var container = new Container();
-            DependencyResolver.UnityConfig.RegisterTypes(container);
-            
-            var solicitudManager = container.GetInstance<ISolicitud>();
-
-            /*
-             * 4.1.11	El sistema valida si obtuvo respuesta [GSAV_SolicitudAcadémica] -- Actualiza la solicitud creada con la respuesta obtenida
-             */
-            /*
-             * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
-             */
-            var solicitud = context.UserData.GetValue<Solicitud>("solicitud");
-            var userName = context.UserData.GetValue<Sesion>("sesion").UserName;
-            Result receivedResult;
-            context.UserData.TryGetValue<Result>("result", out receivedResult);
-            solicitudManager.Actualizar(solicitud.IdSolicitud, null, string.Empty, AppConstant.EstadoSolicitud.ATENDIDO, userName);
-
+            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.ATENDIDO);
             // 4.1.14  El caso de uso finaliza
             context.Wait(MessageReceivedAsync);
         }
 
         private async Task ResumeAfterUnknownAcademicIntent(IDialogContext context, IAwaitable<object> result)
         {
-            var container = new Container();
-            DependencyResolver.UnityConfig.RegisterTypes(container);
-                      
-            var solicitudManager = container.GetInstance<ISolicitud>();
-
-            /*
-             * 4.1.11	El sistema valida si obtuvo respuesta [GSAV_SolicitudAcadémica] -- Actualiza la solicitud creada con la respuesta obtenida
-             */
-            /*
-             * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
-             */
-            var solicitud = context.UserData.GetValueOrDefault<Solicitud>("solicitud");
-
-            var userName = context.UserData.GetValue<Sesion>("sesion").UserName;
-            var receivedResult = context.UserData.GetValueOrDefault<Result>("result");
-
-            if (solicitud != null && receivedResult != null)
-                solicitudManager.Actualizar(solicitud.IdSolicitud, null, string.Empty, AppConstant.EstadoSolicitud.INVALIDO, userName);
+            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
 
             // 4.1.14  El caso de uso finaliza
             await Task.Delay(2000);
@@ -244,6 +213,39 @@ namespace FormBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
+        }
+
+        private void ActualizarSolicitud(IDialogContext context, string estado)
+        {
+            var container = new Container();
+            DependencyResolver.UnityConfig.RegisterTypes(container);
+
+            var solicitudManager = container.GetInstance<ISolicitud>();
+
+            /*
+             * 4.1.11	El sistema valida si obtuvo respuesta [GSAV_SolicitudAcadémica] -- Actualiza la solicitud creada con la respuesta obtenida
+             */
+            /*
+             * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
+             */
+            var solicitud = context.UserData.GetValueOrDefault<Solicitud>("solicitud");
+            var userName = context.UserData.GetValue<Sesion>("sesion").CodigoAlumno;
+            Result receivedResult;
+            context.UserData.TryGetValue<Result>("result", out receivedResult);
+
+            Intencion intent;
+            context.UserData.TryGetValue<Intencion>("intencion", out intent);
+
+
+            if (solicitud != null && receivedResult != null)
+            {
+                long? intentId = null;
+
+                if (intent != null)
+                    intentId = intent.IdIntencion;
+
+                solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, receivedResult.Speech, estado, userName);
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
     {
         public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario)
         {
-            var solicitud_ = new Solicitud();
+            var solicitud = new Solicitud();
             try
             {
                 using (var cnn = MSSQLSERVERCnx.MSSqlCnx())
@@ -39,7 +39,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     {
                         while (rd.Read())
                         {
-                            solicitud_ = new Solicitud
+                            solicitud = new Solicitud
                             {
                                 IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
                                 IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
@@ -53,17 +53,17 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                 }
 
             }
-            catch (Exception)
+            catch(Exception ex)
             {
-
+                throw ex;
             }
 
-            return solicitud_;
+            return solicitud;
         }
 
         public Solicitud Crear(int idCanalAtencion, long idAlumno, int? idCurso, long? idSesion, string consulta, string usuario)
         {
-            var solicitud_ = new Solicitud();
+            var solicitud = new Solicitud();
 
             try
             {
@@ -91,7 +91,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     {
                         while (rd.Read())
                         {
-                            solicitud_ = new Solicitud
+                            solicitud = new Solicitud
                             {
                                 IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
                                 IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
@@ -105,11 +105,11 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                throw ex;
             }
-            return solicitud_;
+            return solicitud;
         }
     }
 }
