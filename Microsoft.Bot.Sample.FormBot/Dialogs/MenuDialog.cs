@@ -74,6 +74,7 @@ namespace FormBot.Dialogs
 
             var userId = context.UserData.GetValue<Sesion>("sesion").IdAlumno;
             var codigoAlumno = context.UserData.GetValue<Sesion>("sesion").CodigoAlumno;
+            var idSesion = context.UserData.GetValue<Sesion>("sesion").IdSesion;
             var tipoConsulta = context.UserData.GetValue<string>("tipo-consulta");
 
             /*
@@ -84,7 +85,7 @@ namespace FormBot.Dialogs
             DependencyResolver.UnityConfig.RegisterTypes(container);
            
             var solicitudManager = container.GetInstance<ISolicitud>();
-            var solicitud = solicitudManager.CrearSolicitud(Convert.ToInt32(tipoConsulta), userId, null, activity.Text, codigoAlumno);
+            var solicitud = solicitudManager.CrearSolicitud(Convert.ToInt32(tipoConsulta), userId, null, idSesion, activity.Text, codigoAlumno);
 
             context.UserData.SetValue("solicitud", solicitud);
 

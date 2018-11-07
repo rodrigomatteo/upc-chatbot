@@ -14,10 +14,10 @@ namespace Upecito.Business
             this.container = container;
         }
 
-        public Solicitud CrearSolicitud(int idCanalAtencion, long idAlumno, int? idCurso, string consulta, string usuario)
+        public Solicitud CrearSolicitud(int idCanalAtencion, long idAlumno, int? idCurso, long? idSesion, string consulta, string usuario)
         {
             var solicitudData = container.GetInstance<ISolicitudData>();
-            return solicitudData.Crear(idCanalAtencion, idAlumno, idCurso, consulta, usuario);
+            return solicitudData.Crear(idCanalAtencion, idAlumno, idCurso, idSesion, consulta, usuario);
         }
 
         public Solicitud Actualizar(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario)
