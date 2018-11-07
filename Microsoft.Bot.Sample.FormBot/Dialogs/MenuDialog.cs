@@ -23,10 +23,8 @@ namespace FormBot.Dialogs
             Consultas_Academicas, Consultas_Tecnicas
         }
 
-        public async Task StartAsync(IDialogContext context)
+        public Task StartAsync(IDialogContext context)
         {
-            //context.Wait(ShowPrompt);            
-
             var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
             var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
 
@@ -38,6 +36,8 @@ namespace FormBot.Dialogs
                prompt: "Selecciona el canal de atención en el que requieres ayuda",
                retry: "Por favor intenta de nuevo"
            );
+
+           return Task.CompletedTask;
         }
 
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<Selection> result)
@@ -195,7 +195,6 @@ namespace FormBot.Dialogs
         {
             var container = new Container();
             DependencyResolver.UnityConfig.RegisterTypes(container);
-
             
             var solicitudManager = container.GetInstance<ISolicitud>();
 
@@ -244,22 +243,6 @@ namespace FormBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
-        }
-
-        public virtual async Task ShowPrompt(IDialogContext context, IAwaitable<object> result)
-        {
-            var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
-            var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
-
-            PromptDialog.Choice(
-               context: context,
-               resume: OnOptionSelected,
-               options: options,
-               descriptions: descriptions,
-               prompt: "Selecciona el canal de atención en el que requieres ayuda",
-               retry: "Por favor intenta de nuevo"
-           );          
-
         }
     }
 }
