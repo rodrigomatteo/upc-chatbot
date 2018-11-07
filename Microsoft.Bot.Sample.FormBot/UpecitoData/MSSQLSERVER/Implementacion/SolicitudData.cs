@@ -65,7 +65,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             return solicitud_;
         }
 
-        public Solicitud Crear(int idCanalAtencion, long idAlumno, int? idCurso, long? idSesion, string consulta, string usuario)
+        public Solicitud Crear(int idCanalAtencion, long idAlumno, int? idCurso, string consulta, string usuario)
         {
             var solicitud_ = new Solicitud();
 
@@ -84,7 +84,6 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pIdCanalAtencion", idCanalAtencion);
                     cmd.Parameters.AddWithValue("@pIdAlumno", idAlumno);
                     cmd.Parameters.AddWithValue("@pIdCurso", idCurso);
-                    cmd.Parameters.AddWithValue("@pIdSesion", idSesion);
                     cmd.Parameters.AddWithValue("@pConsulta", consulta);
                     cmd.Parameters.AddWithValue("@pUsuario", usuario);
                     cmd.Parameters.AddWithValue("@pFechaCreacion", ConvertidorUtil.GmtToPacific(DateTime.Now));

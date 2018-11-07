@@ -9,7 +9,6 @@ namespace Upecito.Model
         public long IdSolicitud { get; set; }
         public long? IdAlumno { get; set; }
         public int? IdCurso { get; set; }
-        public int? IdSesion { get; set; }
         public string Consulta { get; set; }
         public DateTime FechaRegistro { get; set; }
         public string LogUsuario { get; set; }

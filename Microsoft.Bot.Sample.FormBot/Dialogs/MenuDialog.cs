@@ -25,6 +25,17 @@ namespace FormBot.Dialogs
 
         public Task StartAsync(IDialogContext context)
         {
+            // var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
+            // var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
+
+            // PromptDialog.Choice(
+            //    context: context,
+            //    resume: OnOptionSelected,
+            //    options: options,
+            //    descriptions: descriptions,
+            //    prompt: "Selecciona el canal de atención en el que requieres ayuda",
+            //    retry: "Por favor intenta de nuevo"
+            //);
             context.Wait(ShowPrompt);
             return Task.CompletedTask;
         }
@@ -63,7 +74,6 @@ namespace FormBot.Dialogs
 
             var userId = context.UserData.GetValue<Sesion>("sesion").IdAlumno;
             var codigoAlumno = context.UserData.GetValue<Sesion>("sesion").CodigoAlumno;
-            var idSesion = context.UserData.GetValue<Sesion>("sesion").IdSesion;
             var tipoConsulta = context.UserData.GetValue<string>("tipo-consulta");
 
             /*
@@ -74,7 +84,7 @@ namespace FormBot.Dialogs
             DependencyResolver.UnityConfig.RegisterTypes(container);
            
             var solicitudManager = container.GetInstance<ISolicitud>();
-            var solicitud = solicitudManager.CrearSolicitud(Convert.ToInt32(tipoConsulta), userId, null, idSesion, activity.Text, codigoAlumno);
+            var solicitud = solicitudManager.CrearSolicitud(Convert.ToInt32(tipoConsulta), userId, null, activity.Text, codigoAlumno);
 
             context.UserData.SetValue("solicitud", solicitud);
 
