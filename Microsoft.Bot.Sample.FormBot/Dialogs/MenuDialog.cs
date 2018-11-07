@@ -23,21 +23,21 @@ namespace FormBot.Dialogs
             Consultas_Academicas, Consultas_Tecnicas
         }
 
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
-            // var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
-            // var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
+            //context.Wait(ShowPrompt);            
 
-            // PromptDialog.Choice(
-            //    context: context,
-            //    resume: OnOptionSelected,
-            //    options: options,
-            //    descriptions: descriptions,
-            //    prompt: "Selecciona el canal de atención en el que requieres ayuda",
-            //    retry: "Por favor intenta de nuevo"
-            //);
-            context.Wait(ShowPrompt);
-            return Task.CompletedTask;
+            var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
+            var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
+
+            PromptDialog.Choice(
+               context: context,
+               resume: OnOptionSelected,
+               options: options,
+               descriptions: descriptions,
+               prompt: "Selecciona el canal de atención en el que requieres ayuda",
+               retry: "Por favor intenta de nuevo"
+           );
         }
 
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<Selection> result)
@@ -246,7 +246,7 @@ namespace FormBot.Dialogs
             await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
         }
 
-        private Task ShowPrompt(IDialogContext context, IAwaitable<object> result)
+        public virtual async Task ShowPrompt(IDialogContext context, IAwaitable<object> result)
         {
             var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
             var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
@@ -258,9 +258,7 @@ namespace FormBot.Dialogs
                descriptions: descriptions,
                prompt: "Selecciona el canal de atención en el que requieres ayuda",
                retry: "Por favor intenta de nuevo"
-           );
-
-            return Task.CompletedTask;
+           );          
 
         }
     }
