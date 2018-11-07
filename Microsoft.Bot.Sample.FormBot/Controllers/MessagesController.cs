@@ -69,7 +69,7 @@ namespace Microsoft.Bot.Sample.FormBot
                     //if (bot != null && bot.Name.Equals("Bot"))
                     if (bot != null && bot.Name.Equals("upecito"))
                     {
-                        await Conversation.SendAsync(message, () => new RootDialog());
+                        await Conversation.SendAsync(message, () => new WelcomeDialog());
                     }
 
                     if (message.MembersRemoved != null && message.MembersRemoved.Count > 1)
