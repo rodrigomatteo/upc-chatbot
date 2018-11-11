@@ -13,7 +13,7 @@ namespace FormBot.Dialogs
         protected override void MostrarRespuesta(IDialogContext context, Result resultado)
         {
             if (resultado.Speech.Equals(string.Empty))
-                resultado.Speech = "EStoy entrenando...";
+                resultado.Speech = "Por favor, canalice su consulta vía Contacto UPC: http://www.upc.edu.pe/servicios/contacto-upc";
 
             base.MostrarRespuesta(context, resultado);
         }

@@ -152,7 +152,7 @@ namespace FormBot.Dialogs
                                 context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
                                 break;
                             case AppConstant.Intencion.DEFAULT:
-                                context.Call(new EntrenandoDialog(), ResumeAfterUnknownAcademicIntent);
+                                context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
                                 break;
                             default:
                                 /*
@@ -162,7 +162,7 @@ namespace FormBot.Dialogs
                                  * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
                                  * [GSAV_RN004-Comsultas Académicas No Resueltas]
                                  */
-                                context.Call(new NoRespuestaDialog(), ResumeAfterUnknownAcademicIntent);
+                                context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
                                 break;
                         }
                     }
@@ -170,9 +170,12 @@ namespace FormBot.Dialogs
                     {
                         var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
                         var message = context.MakeMessage();
-                        message.Text = $"Uhmmm... {userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas. Por aquí puedo ayudarte con tus consultas sobre los siguientes temas";
-                        
+                        message.Text = $"Uhmmm... {userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas.";
+
+                        context.PrivateConversationData.SetValue("custom", message.Text);
+
                         await context.PostAsync(message);
+
                         ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
 
                         context.Wait(ResumeGetAcademicIntent);
@@ -204,6 +207,15 @@ namespace FormBot.Dialogs
         private async Task ResumeAfterUnknownAcademicIntent(IDialogContext context, IAwaitable<object> result)
         {
             ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
+
+            // 4.1.14  El caso de uso finaliza
+            await Task.Delay(2000);
+            //ShowPrompt(context);
+        }
+
+        private async Task ResumeAfterFailedAcademicIntent(IDialogContext context, IAwaitable<object> result)
+        {
+            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
 
             // 4.1.14  El caso de uso finaliza
             await Task.Delay(2000);
@@ -244,7 +256,10 @@ namespace FormBot.Dialogs
                 if (intent != null)
                     intentId = intent.IdIntencion;
 
-                solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, receivedResult.Speech, estado, userName);
+                var respuestaPersonalizada = context.PrivateConversationData.GetValueOrDefault<string>("custom");
+                var solucion = respuestaPersonalizada.Equals(string.Empty) ? receivedResult.Speech : respuestaPersonalizada;
+
+                solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName);
             }
         }
     }

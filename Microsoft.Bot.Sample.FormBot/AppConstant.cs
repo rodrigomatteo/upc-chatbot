@@ -39,7 +39,7 @@ namespace FormBot
             public const string PROMEDIO = "Promedio";
             public const string RETIRO = "Retiro";
             public const string PROGRAMACION = "ProgramacionAcademica";
-            public const string CALENDARIO = "Calendario Academico";
+            public const string CALENDARIO = "CalendarioAcademico";
             public const string ORGANIZACION = "Organizacion del Aula Virtual";
             public const string DEFAULT = "Default Fallback Intent";            
         }
