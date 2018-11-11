@@ -55,10 +55,8 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             }
             catch (Exception)
             {
-
+                throw;
             }
-
-            return null;
         }
 
         public Sesion Cerrar(long idSesion)
@@ -94,9 +92,8 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             }
             catch (Exception)
             {
-
+                throw;
             }
-            return null;
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Internals;
 using Microsoft.Bot.Connector;
+using FormBot.Util;
 
 namespace SimpleEchoBot
 {
@@ -16,7 +17,6 @@ namespace SimpleEchoBot
             // Bot Storage: This is a great spot to register the private state storage for your bot. 
             // We provide adapters for Azure Table, CosmosDb, SQL Azure, or you can implement your own!
             // For samples and documentation, see: https://github.com/Microsoft/BotBuilder-Azure
-
             Conversation.UpdateContainer(
                 builder =>
                 {
@@ -35,6 +35,10 @@ namespace SimpleEchoBot
                         .SingleInstance();
 
                 });
+
+            var botBuilder = new ContainerBuilder();
+            botBuilder.RegisterModule(new DefaultExceptionMessageOverrideModule());
+            botBuilder.Update(Conversation.Container);
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
         }

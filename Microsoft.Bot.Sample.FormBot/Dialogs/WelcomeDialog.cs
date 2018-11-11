@@ -16,10 +16,6 @@ namespace FormBot.Dialogs
     {
         public async Task StartAsync(IDialogContext context)
         {
-            //var userName = "U201502689";
-            //var userName = context.Activity.From.Name;
-
-            //var userId = "1";
             var userId = context.Activity.From.Id;
 
             var container = new Container();
@@ -32,7 +28,7 @@ namespace FormBot.Dialogs
             message.Text = $"Hola {sesionData.Nombre}, soy UPECITO el asesor del Aula Virtual de UPC.Te puedo ayudar con tus consultas académicas y Técnicas del Aula Virtual.";
 
             await context.PostAsync(message);
-                       
+
             if (sesionData == null)
             {
                 context.Done(true);
@@ -40,8 +36,7 @@ namespace FormBot.Dialogs
             }
 
             context.UserData.SetValue("sesion", sesionData);
-            context.Call(new MenuDialog(), ResumeWelcome);            
-
+            context.Call(new MenuDialog(), ResumeWelcome);
         }
 
         private async Task ResumeWelcome(IDialogContext context, IAwaitable<object> result)

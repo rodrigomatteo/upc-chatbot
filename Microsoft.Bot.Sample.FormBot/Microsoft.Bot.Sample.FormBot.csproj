@@ -308,6 +308,8 @@
     <Compile Include="UpecitoData\Oracle\Implementacion\SesionData.cs" />
     <Compile Include="UpecitoData\Oracle\Implementacion\SolicitudData.cs" />
     <Compile Include="UpecitoData\Util\UtilConverter.cs" />
+    <Compile Include="Util\PostUnhandledExceptionToUser.cs" />
+    <Compile Include="Util\DefaultExceptionMessageOverrideModule.cs" />
     <Compile Include="Util\ConvertidorUtil.cs" />
   </ItemGroup>
   <ItemGroup>
