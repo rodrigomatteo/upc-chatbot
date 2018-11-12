@@ -43,15 +43,18 @@ namespace FormBot.Util
             {
                 try
                 {
-                    if(ex.Source == "Google.Api.Gax")
+                    if (ex.Source == "Google.Api.Gax")
                         await this.botToUser.PostAsync("Ocurrió un problema de comunicación con el servidor. Por favor intente más tarde");
-
-                    this.trace.WriteLine(ex);
+                    else
+                        //await this.botToUser.PostAsync(this.resources.GetString("UnhandledExceptionToUser"));
+                        await this.botToUser.PostAsync("Hay un error");
                 }
-                catch (Exception innerEx)
+                catch (Exception inner)
                 {
-                    this.trace.WriteLine(innerEx);
+                    this.trace.WriteLine(inner);
                 }
+
+                throw;
             }
         }
     }
