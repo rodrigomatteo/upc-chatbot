@@ -11,6 +11,7 @@ using Grpc.Auth;
 using Microsoft.Bot.Connector;
 using Upecito.Model;
 using System;
+using System.Configuration;
 
 namespace FormBot.Dialogflow
 {
@@ -53,7 +54,7 @@ namespace FormBot.Dialogflow
                     };
 
                     var sessionId = Guid.NewGuid().ToString();
-                    var projectId = AppConstant.DialogFlow.ProjectId;                    
+                    var projectId = ConfigurationManager.AppSettings["ApiAiProjectId"].ToString();                    
                     var sessionName = new SessionName(projectId, sessionId);
 
                     var dialogFlow = client.DetectIntent(sessionName, query);
@@ -105,8 +106,8 @@ namespace FormBot.Dialogflow
                 //    }
                 //}
             }
-            catch(Exception ex) {
-
+            catch {
+                throw;
             }
 
             return result;

@@ -65,7 +65,14 @@ namespace FormBot.Dialogs
 
         private async Task ResumeGetAcademicIntent(IDialogContext context, IAwaitable<string> result)
         {
-            await Process(context);
+            try
+            {
+                await Process(context);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         private async Task Process(IDialogContext context)
@@ -89,112 +96,120 @@ namespace FormBot.Dialogs
 
             context.UserData.SetValue("solicitud", solicitud);
 
-            var handler = container.GetInstance<DialogEngine>();
-            var receivedResult = await handler.GetSpeechAsync(activity);
-
-            var intencionManager = container.GetInstance<IIntencion>();
-            /*
-             * 4.1.5   El Sistema valida si existe una “Intención de Consulta” para la pregunta 
-             * ingresada por el alumno a través del Agente de Procesamiento de Lenguaje Natural. 
-             * GSAV _RN013 – Tipos de Consultas Académicas
-            */
-            if (receivedResult.ExistIntent)
+            try
             {
+                var handler = container.GetInstance<DialogEngine>();
+                var receivedResult = await handler.GetSpeechAsync(activity);
+
+                var intencionManager = container.GetInstance<IIntencion>();
                 /*
-                 * 4.1.6   El Sistema valida si la “Intención de Consulta” obtenida tiene una probabilidad 
-                 * mayor o igual al 80 %.GSAV _RN018– Porcentaje para respuestas certera
+                 * 4.1.5   El Sistema valida si existe una “Intención de Consulta” para la pregunta 
+                 * ingresada por el alumno a través del Agente de Procesamiento de Lenguaje Natural. 
+                 * GSAV _RN013 – Tipos de Consultas Académicas
                 */
-                if (receivedResult.ExistValidIntent)
+                if (receivedResult.ExistIntent)
                 {
-                    var intent = receivedResult.GetValidIntent();
-                    var intencion = intencionManager.ObtenerCategoria(intent);
-
-                    context.UserData.SetValue<Result>("result", receivedResult);
-                    context.UserData.SetValue<Intencion>("intencion", intencion);
-
-                    if (!string.IsNullOrEmpty(intencion.Nombre))
+                    /*
+                     * 4.1.6   El Sistema valida si la “Intención de Consulta” obtenida tiene una probabilidad 
+                     * mayor o igual al 80 %.GSAV _RN018– Porcentaje para respuestas certera
+                    */
+                    if (receivedResult.ExistValidIntent)
                     {
-                        switch (intencion.Nombre)
+                        var intent = receivedResult.GetValidIntent();
+                        var intencion = intencionManager.ObtenerCategoria(intent);
+
+                        context.UserData.SetValue<Result>("result", receivedResult);
+                        context.UserData.SetValue<Intencion>("intencion", intencion);
+
+                        if (!string.IsNullOrEmpty(intencion.Nombre))
                         {
-                            /*
-                             * 4.1.7	Si la “Intención de Consulta” es “Programación de Actividades”, 
-                             * el sistema extiende el caso de uso: GSAV_CUS005_Consultar Programación de Actividades
-                            */
-                            case AppConstant.Intencion.PROGRAMACION:
-                                context.Call(new ProgramacionActividadesDialog(), ResumeAfterSuccessAcademicIntent);
-                                break;
-                            /*
-                             * 4.1.8	Si la “Intención de Consulta” es “Calendario Académico”, 
-                             * el sistema extiende el caso de uso: GSAV_CUS006_Consultar Calendario Académico
-                            */
-                            case AppConstant.Intencion.CALENDARIO:
-                                context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
-                                break;
-                            case AppConstant.Intencion.ORGANIZACION:
-                                context.Call(new OrganizacionDialog(), ResumeAfterSuccessAcademicIntent);
-                                break;
-                            /*
-                            * 4.1.9	Si la “Intención de Consulta” es “Organización de Aula Virtual”, “Matricula”, 
-                            * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
-                            * GSAV_CUS007_Consultar Temas Frecuentes
-                           */
-                            case AppConstant.Intencion.MATRICULA:
-                            case AppConstant.Intencion.ASISTENCIA:
-                            case AppConstant.Intencion.RETIRO:
-                            case AppConstant.Intencion.PROMEDIO:
-                                context.Call(new PreguntasFrecuentesDialog(), ResumeAfterSuccessAcademicIntent);
-                                break;
-                            /*
-                             * 4.1.10  Si la “Intención de Consulta” es “Créditos de un Curso”, el sistema extiende el caso de uso: 
-                             * GSAV_CUS008_Consultar Créditos de un Curso
-                            */
-                            case AppConstant.Intencion.CREDITOS:
-                                context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
-                                break;
-                            case AppConstant.Intencion.DEFAULT:
-                                context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
-                                break;
-                            default:
+                            switch (intencion.Nombre)
+                            {
                                 /*
-                                 * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
-                                 * para el tipo de consulta ingresada por el alumno, entonces deriva la
-                                 * consulta al docente enviando un correo electrónico y actualiza el estado
-                                 * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
-                                 * [GSAV_RN004-Comsultas Académicas No Resueltas]
-                                 */
-                                context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
-                                break;
+                                 * 4.1.7	Si la “Intención de Consulta” es “Programación de Actividades”, 
+                                 * el sistema extiende el caso de uso: GSAV_CUS005_Consultar Programación de Actividades
+                                */
+                                case AppConstant.Intencion.PROGRAMACION:
+                                    context.Call(new ProgramacionActividadesDialog(), ResumeAfterSuccessAcademicIntent);
+                                    break;
+                                /*
+                                 * 4.1.8	Si la “Intención de Consulta” es “Calendario Académico”, 
+                                 * el sistema extiende el caso de uso: GSAV_CUS006_Consultar Calendario Académico
+                                */
+                                case AppConstant.Intencion.CALENDARIO:
+                                    context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
+                                    break;
+                                case AppConstant.Intencion.ORGANIZACION:
+                                    context.Call(new OrganizacionDialog(), ResumeAfterSuccessAcademicIntent);
+                                    break;
+                                /*
+                                * 4.1.9	Si la “Intención de Consulta” es “Organización de Aula Virtual”, “Matricula”, 
+                                * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
+                                * GSAV_CUS007_Consultar Temas Frecuentes
+                               */
+                                case AppConstant.Intencion.MATRICULA:
+                                case AppConstant.Intencion.ASISTENCIA:
+                                case AppConstant.Intencion.RETIRO:
+                                case AppConstant.Intencion.PROMEDIO:
+                                    context.Call(new PreguntasFrecuentesDialog(), ResumeAfterSuccessAcademicIntent);
+                                    break;
+                                /*
+                                 * 4.1.10  Si la “Intención de Consulta” es “Créditos de un Curso”, el sistema extiende el caso de uso: 
+                                 * GSAV_CUS008_Consultar Créditos de un Curso
+                                */
+                                case AppConstant.Intencion.CREDITOS:
+                                    context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
+                                    break;
+                                case AppConstant.Intencion.DEFAULT:
+                                    context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
+                                    break;
+                                default:
+                                    /*
+                                     * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
+                                     * para el tipo de consulta ingresada por el alumno, entonces deriva la
+                                     * consulta al docente enviando un correo electrónico y actualiza el estado
+                                     * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
+                                     * [GSAV_RN004-Comsultas Académicas No Resueltas]
+                                     */
+                                    context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
+                            var message = context.MakeMessage();
+                            message.Text = $"Uhmmm... {userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas.";
+
+                            context.PrivateConversationData.SetValue("custom", message.Text);
+
+                            await context.PostAsync(message);
+
+                            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
+
+                            context.Wait(ResumeGetAcademicIntent);
                         }
                     }
                     else
                     {
-                        var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
-                        var message = context.MakeMessage();
-                        message.Text = $"Uhmmm... {userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas.";
-
-                        context.PrivateConversationData.SetValue("custom", message.Text);
-
-                        await context.PostAsync(message);
-
-                        ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
-
-                        context.Wait(ResumeGetAcademicIntent);
+                        /*
+                         * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
+                         * para el tipo de consulta ingresada por el alumno, entonces deriva la
+                         * consulta al docente enviando un correo electrónico y actualiza el estado
+                         * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
+                         * [GSAV_RN004-Comsultas Académicas No Resueltas]
+                         */
+                        context.Call(new SinScoreDialog(), ResumeAfterUnknownAcademicIntent);
                     }
                 }
                 else
-                {
-                    /*
-                     * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
-                     * para el tipo de consulta ingresada por el alumno, entonces deriva la
-                     * consulta al docente enviando un correo electrónico y actualiza el estado
-                     * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
-                     * [GSAV_RN004-Comsultas Académicas No Resueltas]
-                     */
                     context.Call(new SinScoreDialog(), ResumeAfterUnknownAcademicIntent);
-                }
             }
-            else
-                context.Call(new SinScoreDialog(), ResumeAfterUnknownAcademicIntent);
+            catch
+            {
+                throw;
+            }
+
         }
 
         private async Task ResumeAfterSuccessAcademicIntent(IDialogContext context, IAwaitable<object> result)

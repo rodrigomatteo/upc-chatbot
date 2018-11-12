@@ -45,7 +45,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             }
             catch (Exception)
             {
-                //LogError(ex);
+                throw;
             }
 
             return intencion;
