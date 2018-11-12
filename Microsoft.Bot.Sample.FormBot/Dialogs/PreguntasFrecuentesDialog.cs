@@ -16,7 +16,12 @@ namespace FormBot.Dialogs
             var result = ObtenerRespuesta(context);
 
             var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            var reply = activity.CreateReply(result.Speech);
+            var speech = result.Speech;
+
+            if (speech.Equals(string.Empty))
+                speech = @"Por favor canalice su consulta via Contacto UPC: http://www.upc.edu.pe/servicio/contacto-upc";
+
+            var reply = activity.CreateReply(speech);
             await connector.Conversations.ReplyToActivityAsync(reply);
 
             context.Done(true);
