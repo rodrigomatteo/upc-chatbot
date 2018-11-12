@@ -271,7 +271,7 @@ namespace FormBot.Dialogs
                 if (intent != null)
                     intentId = intent.IdIntencion;
 
-                var respuestaPersonalizada = context.PrivateConversationData.GetValueOrDefault<string>("custom");
+                var respuestaPersonalizada = context.PrivateConversationData.GetValueOrDefault("custom", string.Empty);
                 var solucion = respuestaPersonalizada.Equals(string.Empty) ? receivedResult.Speech : respuestaPersonalizada;
 
                 solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName);
