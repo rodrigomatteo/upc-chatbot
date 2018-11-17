@@ -177,7 +177,7 @@ namespace FormBot.Dialogs
                         }
                         else
                         {
-                            var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
+                            var userName = context.UserData.GetValue<Sesion>("sesion").Nombre;
                             var message = context.MakeMessage();
                             message.Text = $"Uhmmm... {userName} estoy entrenándome para ayudarte más adelante con este tipo de dudas. Pero recuerda que vía Contacto UPC:  http://www.upc.edu.pe/servicios/contacto-upc puedes resolver tus dudas o consultas.";
 
@@ -271,7 +271,7 @@ namespace FormBot.Dialogs
                 if (intent != null)
                     intentId = intent.IdIntencion;
 
-                var respuestaPersonalizada = context.PrivateConversationData.GetValueOrDefault<string>("custom");
+                var respuestaPersonalizada = context.PrivateConversationData.GetValueOrDefault("custom", string.Empty);
                 var solucion = respuestaPersonalizada.Equals(string.Empty) ? receivedResult.Speech : respuestaPersonalizada;
 
                 solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName);
