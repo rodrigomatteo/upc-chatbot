@@ -315,7 +315,7 @@ namespace FormBot.Util
             }
             catch(Exception ex)
             {
-
+                Console.WriteLine(ex.Message);   
             }
 
             return result;

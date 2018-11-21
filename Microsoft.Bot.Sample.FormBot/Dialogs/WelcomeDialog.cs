@@ -1,13 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using FormBot.Util;
+﻿using FormBot.Util;
 using Microsoft.Bot.Builder.Dialogs;
 using SimpleInjector;
-using Upecito.Business;
-using Upecito.Data.Implementation;
-using Upecito.Data.Interface;
+using System;
+using System.Threading.Tasks;
 using Upecito.Interface;
-using Upecito.Model;
 
 namespace FormBot.Dialogs
 {
@@ -16,7 +12,8 @@ namespace FormBot.Dialogs
     {
         public async Task StartAsync(IDialogContext context)
         {
-            var userId = context.Activity.From.Id;
+            //TODO: var userId = context.Activity.From.Id;
+            var userId = "4";
 
             var container = new Container();
             DependencyResolver.UnityConfig.RegisterTypes(container);
@@ -29,14 +26,16 @@ namespace FormBot.Dialogs
 
             await context.PostAsync(message);
 
-            if (sesionData == null)
+            if (sesionData != null)
+            {
+                context.UserData.SetValue("sesion", sesionData);
+                context.Call(new MenuDialog(), ResumeWelcome);
+            }
+            else
             {
                 context.Done(true);
-                return;
             }
 
-            context.UserData.SetValue("sesion", sesionData);
-            context.Call(new MenuDialog(), ResumeWelcome);
         }
 
         private async Task ResumeWelcome(IDialogContext context, IAwaitable<object> result)

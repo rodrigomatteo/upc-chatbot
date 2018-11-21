@@ -1,17 +1,29 @@
-﻿using System.Net;
-using System.Threading.Tasks;
-using Api.Ai.ApplicationService.Factories;
-using Api.Ai.Domain.DataTransferObject.Request;
-using Api.Ai.Domain.Enum;
+﻿using Api.Ai.ApplicationService.Factories;
 using Api.Ai.Domain.Service.Factories;
+using FormBot.Models;
+using FormBot.Services;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Dialogflow.V2;
-using Grpc.Core;
+using Google.Protobuf;
+using Google.Protobuf.Collections;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Auth;
+using Grpc.Core;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
-using Upecito.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using SimpleInjector;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
+using Upecito.Interface;
+using Upecito.Model;
+using Intent = Upecito.Model.Intent;
 
 namespace FormBot.Dialogflow
 {
@@ -30,21 +42,21 @@ namespace FormBot.Dialogflow
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<Result> GetSpeechAsync(Activity message)
+        public async Task<Result> GetSpeechAsync(Activity message, Sesion sesion, IDialogContext context)
         {
-            var result = new Result();
+            Result result = new Result();
 
             try
             {
-                var fileSavePath = System.Web.HttpContext.Current.Server.MapPath("~/Dialogflow/") + AppConstant.DialogFlow.FilePrivateKeyIdJson;
+                string fileSavePath = System.Web.HttpContext.Current.Server.MapPath("~/Dialogflow/") + AppConstant.DialogFlow.FilePrivateKeyIdJson;
 
-                if ((System.IO.File.Exists(fileSavePath)))
+                if (System.IO.File.Exists(fileSavePath))
                 {
-                    var cred = GoogleCredential.FromFile(fileSavePath);
-                    var channel = new Channel(SessionsClient.DefaultEndpoint.Host, SessionsClient.DefaultEndpoint.Port, cred.ToChannelCredentials());
-                    var client = SessionsClient.Create(channel);
+                    GoogleCredential cred = GoogleCredential.FromFile(fileSavePath);
+                    Channel channel = new Channel(SessionsClient.DefaultEndpoint.Host, SessionsClient.DefaultEndpoint.Port, cred.ToChannelCredentials());
+                    SessionsClient client = SessionsClient.Create(channel);
 
-                    var query = new QueryInput
+                    QueryInput query = new QueryInput
                     {
                         Text = new TextInput
                         {
@@ -53,64 +65,154 @@ namespace FormBot.Dialogflow
                         }
                     };
 
-                    var sessionId = Guid.NewGuid().ToString();
-                    var projectId = ConfigurationManager.AppSettings["ApiAiProjectId"].ToString();                    
-                    var sessionName = new SessionName(projectId, sessionId);
+                    //string sessionId = Guid.NewGuid().ToString();
+                    //string projectId = "upc-chatbot"; //TODO: Move to AppSettings
 
-                    var dialogFlow = client.DetectIntent(sessionName, query);
-                    var response = dialogFlow.QueryResult;
+                    string sessionId = sesion.IdSesion.ToString();
+                    string projectId = ConfigurationManager.AppSettings["ApiAiProjectId"].ToString();
 
-                    result.SessionId = message.Id;
-                    result.Status = (int)HttpStatusCode.OK;
-                    result.Speech = response.FulfillmentText;
+                    SessionName sessionName = new SessionName(projectId, sessionId);
 
-                    var entity = new Upecito.Model.Intent()
+                    RepeatedField<Context> outputContexts = new RepeatedField<Context>();
+
+                    List<DialogFlowContext> dialogFlowContexts = new List<DialogFlowContext>();
+
+                    if (context.UserData.ContainsKey("OutputContexts"))
                     {
-                        IntentId = response.Intent.IntentName.IntentId,
-                        IntentName = response.Intent.DisplayName,
-                        Score = response.IntentDetectionConfidence
+                        string outputContextsGetValue = context.UserData.GetValue<string>("OutputContexts");
+
+                        if (!string.IsNullOrEmpty(outputContextsGetValue))
+                        {
+                            dialogFlowContexts = JsonConvert.DeserializeObject<List<DialogFlowContext>>(outputContextsGetValue);
+
+                            foreach (var item in dialogFlowContexts)
+                            {
+                                Struct s = new Struct();
+
+                                foreach (var p in item.Parameters)
+                                {
+                                    Value v = new Value
+                                    {
+                                        StructValue = null,
+                                        ListValue = null,
+                                        NumberValue = 0D,
+                                        StringValue = p.Value //This order position matters!!!
+                                    };
+
+                                    s.Fields.Add(p.Key, v);
+                                }
+
+                                outputContexts.Add(new Context { Name = item.Name, LifespanCount = item.LifespanCount, Parameters = s });
+                            }
+
+                        }
+
+                    }
+
+                    DetectIntentRequest detectIntentRequest = new DetectIntentRequest
+                    {
+                        SessionAsSessionName = sessionName,
+                        QueryInput = query,
+                        QueryParams = new QueryParameters()
                     };
-                    result.Intents.Add(entity);
+
+                    if (outputContexts.Count > 0)
+                    {
+                        detectIntentRequest.QueryParams.Contexts.AddRange(outputContexts);
+
+                    }
+
+                    DetectIntentResponse dialogFlow = client.DetectIntent(detectIntentRequest);
+
+                    QueryResult response = dialogFlow.QueryResult;
+
+                    string outputContextsSetValue = response.OutputContexts.ToString();
+
+                    context.UserData.SetValue("OutputContexts", outputContextsSetValue);
+
+                    await EvaluateDialogFlowResponse(response, result, message, sesion);
+
                 }
-                
-                //var queryAppService = _apiAiAppServiceFactory.CreateQueryAppService("https://api.api.ai/v1", "adf581038f9a4d3aa7f96479e4ac497e");
 
-                //var queryRequest = new QueryRequest
-                //{
-                //    Query = new[] { message.Text },
-                //    Lang = Language.Spanish,
-                //    SessionId = message.Id
-                //};
-
-                //result.SessionId = message.Id;
-                //var queryResponse = await queryAppService.GetQueryAsync(queryRequest);
-
-                //if (queryResponse?.Result != null)
-                //{
-                //    if (queryResponse.Status?.Code == (int)HttpStatusCode.OK)
-                //    {
-                //        result.Status = (int)HttpStatusCode.OK;
-                //        if (queryResponse.Result.Fulfillment != null)
-                //        //    result.Speech = "Oooops!";
-                //        //else if (queryResponse.Result.Fulfillment != null)
-                //        {
-                //            result.Speech = queryResponse.Result.Fulfillment.Speech;
-                //            var entity = new Upecito.Model.Intent()
-                //            {
-                //                IntentId = queryResponse.Result.Metadata.IntentId,
-                //                IntentName = queryResponse.Result.Metadata.IntentName,
-                //                Score = queryResponse.Result.Score
-                //            };
-                //            result.Intents.Add(entity);
-                //        }
-                //    }
-                //}
             }
-            catch {
-                throw;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             return result;
+        }
+
+        private async Task EvaluateDialogFlowResponse(QueryResult response, Result result, Activity message, Sesion sesion)
+        {
+            result.SessionId = message.Id;
+            result.Status = (int)HttpStatusCode.OK;
+            result.Speech = response.FulfillmentText;
+
+            result.OutputContexts = response.OutputContexts.ToString();
+
+            Intent entity = new Intent()
+            {
+                IntentId = response.Intent.IntentName.IntentId,
+                IntentName = response.Intent.DisplayName,
+                Score = response.IntentDetectionConfidence,
+                Parameters = response.Parameters.ToString(),
+                AllRequiredParamsPresent = response.AllRequiredParamsPresent
+            };
+
+            result.Intents.Add(entity);
+
+            //TODO: Create chatlog record
+            PersistChatLog(result, response, sesion);
+
+            //TODO: bool IsEmailSent = await SmtpEmailSender.SendEmailAsync("upc.chatbot@gmail.com", "parismiguel@gmail.com", "UPECITO - Email test", JsonConvert.SerializeObject(result));
+        }
+
+        private void PersistChatLog(Result result, QueryResult response, Sesion sesion)
+        {
+            try
+            {
+                var container = new Container();
+                DependencyResolver.UnityConfig.RegisterTypes(container);
+                IChatLog chatlog = container.GetInstance<IChatLog>();
+
+                ChatLog input = new ChatLog
+                {
+                    IdSesion = (int)sesion.IdSesion,
+                    IdAlumno = (int)sesion.IdAlumno,
+                    Fecha = DateTime.Now,
+                    Texto = response.QueryText,
+                    Intencion = response.Intent.DisplayName,
+                    Fuente = "Usuario",
+                    Contexto = response.OutputContexts.ToString(),
+                    Parametros = response.Parameters.ToString(),
+                    Confianza = (decimal)response.IntentDetectionConfidence
+
+                };
+
+                ChatLog chatLogInputData = chatlog.CrearChatLog(input);
+
+                ChatLog output = new ChatLog
+                {
+                    IdSesion = (int)sesion.IdSesion,
+                    IdAlumno = (int)sesion.IdAlumno,
+                    Fecha = DateTime.Now,
+                    Texto = response.FulfillmentText,
+                    Intencion = response.Intent.DisplayName,
+                    Fuente = "Bot",
+                    Contexto = response.OutputContexts.ToString(),
+                    Parametros = response.Parameters.ToString(),
+                    Confianza = (decimal)response.IntentDetectionConfidence
+
+                };
+
+                ChatLog chatLogOutputData = chatlog.CrearChatLog(output);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
     }
 }

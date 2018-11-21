@@ -1,17 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Connector;
-using Api.Ai.ApplicationService.Factories;
+﻿using Api.Ai.ApplicationService.Factories;
 using Api.Ai.Domain.Service.Factories;
 using Api.Ai.Infrastructure.Factories;
-using SimpleInjector;
-using Upecito.Interface;
-using Upecito.Business;
-using Upecito.Data.Implementation;
-using Upecito.Data.Interface;
-using Upecito.Model;
 using FormBot.Dialogflow;
+using System;
+using Upecito.Business;
+using Upecito.Data.Interface;
+using Upecito.Interface;
 
 namespace FormBot.DependencyResolver
 {
@@ -28,6 +22,8 @@ namespace FormBot.DependencyResolver
             container.RegisterSingleton<IIntencion, IntencionManager>();
             container.RegisterSingleton<ISesion, SesionManager>();
 
+            container.RegisterSingleton<IChatLog, ChatLogManager>();
+
             if (database.Equals("ORACLE"))
             {
                 container.Register<ISesionData, Upecito.Data.Oracle.Implementacion.SesionData>();
@@ -40,6 +36,7 @@ namespace FormBot.DependencyResolver
                 container.Register<ISesionData, Upecito.Data.MSSQLSERVER.Implementacion.SesionData>();
                 container.Register<ISolicitudData, Upecito.Data.MSSQLSERVER.Implementacion.SolicitudData>();
                 container.Register<IIntencionData, Upecito.Data.MSSQLSERVER.Implementacion.IntencionData>();
+                container.Register<IChatLogData, Upecito.Data.MSSQLSERVER.Implementacion.ChatLogData>();
             }
         }
     }

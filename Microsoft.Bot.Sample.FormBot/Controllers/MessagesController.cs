@@ -45,50 +45,63 @@ namespace Microsoft.Bot.Sample.FormBot
             }
             else
             {
-                HandleSystemMessage(activity);
+                await HandleSystemMessage(activity);
             }
 
             return new HttpResponseMessage(HttpStatusCode.Accepted);
         }
 
-        private async void HandleSystemMessage(Activity message)
+        private async Task HandleSystemMessage(Activity message)
         {
-            if (message.Type == ActivityTypes.DeleteUserData)
+            try
             {
-                // Implement user deletion here
-                // If we handle user deletion, return a real message
-            }
-            else if (message.Type == ActivityTypes.ConversationUpdate)
-            {
-                // Handle conversation state changes, like members being added and removed
-                // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
-                // Not available in all channels
-                if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
+                if (message.Type == ActivityTypes.DeleteUserData)
                 {
-                    var bot = message.MembersAdded.FirstOrDefault();
-                    //if (bot != null && bot.Name.Equals("Bot"))
-                    if (bot != null && bot.Name.Equals("upecito"))
+                    // Implement user deletion here
+                    // If we handle user deletion, return a real message
+                }
+                else if (message.Type == ActivityTypes.ConversationUpdate)
+                {
+                    // Handle conversation state changes, like members being added and removed
+                    // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
+                    // Not available in all channels
+                    if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
                     {
-                        await Conversation.SendAsync(message, () => new RootDialog());
+                        var bot = message.MembersAdded.FirstOrDefault();
+                        //if (bot != null && bot.Name.Equals("Bot")) //TODO: upecito
+
+                        if (bot != null)
+                        {
+                            await Conversation.SendAsync(message, () => new RootDialog());
+                        }
+                        else
+                        {
+                            if (message.MembersRemoved != null && message.MembersRemoved?.Count > 1)
+                                await Conversation.SendAsync(message, () => new CerrarSesionDialog());
+                        }
+
                     }
 
-                    if (message.MembersRemoved != null && message.MembersRemoved.Count > 1)
-                        await Conversation.SendAsync(message, () => new CerrarSesionDialog());
                 }
+                else if (message.Type == ActivityTypes.ContactRelationUpdate)
+                {
+                    // Handle add/remove from contact lists
+                    // Activity.From + Activity.Action represent what happened
+                }
+                else if (message.Type == ActivityTypes.Typing)
+                {
+                    // Handle knowing tha the user is typing
+                }
+                else if (message.Type == ActivityTypes.Ping)
+                {
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
-            }
-            else if (message.Type == ActivityTypes.ContactRelationUpdate)
-            {
-                // Handle add/remove from contact lists
-                // Activity.From + Activity.Action represent what happened
-            }
-            else if (message.Type == ActivityTypes.Typing)
-            {
-                // Handle knowing tha the user is typing
-            }
-            else if (message.Type == ActivityTypes.Ping)
-            {
-            }
+
         }
     }
 }

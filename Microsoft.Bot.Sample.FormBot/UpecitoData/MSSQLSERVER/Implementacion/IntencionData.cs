@@ -43,9 +43,9 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine(ex.Message);
             }
 
             return intencion;

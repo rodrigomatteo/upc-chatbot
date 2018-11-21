@@ -16,6 +16,7 @@ namespace FormBot.Dialogs
                 resultado.Speech = "Por favor, canalice su consulta vía Contacto UPC: http://www.upc.edu.pe/servicios/contacto-upc";
 
             base.MostrarRespuesta(context, resultado);
+            context.Done(this);
         }
     }
 }

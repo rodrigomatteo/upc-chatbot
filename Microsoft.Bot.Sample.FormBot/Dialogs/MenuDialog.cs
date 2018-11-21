@@ -12,6 +12,8 @@ using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
 using Upecito.Model;
 using FormBot.Dialogflow;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace FormBot.Dialogs
 {
@@ -33,11 +35,11 @@ namespace FormBot.Dialogs
                resume: OnOptionSelected,
                options: options,
                descriptions: descriptions,
-               prompt: "Selecciona el canal de atención en el que requieres ayuda",
-               retry: "Por favor intenta de nuevo"
+               prompt: "Selecciona el canal de atención en el que requieres ayuda"
+               //retry: "Por favor intenta de nuevo"
            );
 
-           return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<Selection> result)
@@ -56,6 +58,7 @@ namespace FormBot.Dialogs
                     PromptDialog.Text(context, ResumeGetAcademicIntent, $"Por favor {userName}, dime tu consulta sobre Consultas Ténicas", "Intenta de nuevo");
                     break;
             }
+
         }
 
         private async Task ResumeGetAcademicIntent(IDialogContext context, IAwaitable<IMessageActivity> result)
@@ -69,9 +72,9 @@ namespace FormBot.Dialogs
             {
                 await Process(context);
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -79,9 +82,12 @@ namespace FormBot.Dialogs
         {
             var activity = context.Activity as Activity;
 
-            var userId = context.UserData.GetValue<Sesion>("sesion").IdAlumno;
-            var codigoAlumno = context.UserData.GetValue<Sesion>("sesion").CodigoAlumno;
-            var idSesion = context.UserData.GetValue<Sesion>("sesion").IdSesion;
+            Sesion sesion = context.UserData.GetValue<Sesion>("sesion");
+
+            var userId = sesion.IdAlumno;
+            var codigoAlumno = sesion.CodigoAlumno;
+            var idSesion = sesion.IdSesion;
+
             var tipoConsulta = context.UserData.GetValue<string>("tipo-consulta");
 
             /*
@@ -98,10 +104,11 @@ namespace FormBot.Dialogs
 
             try
             {
-                var handler = container.GetInstance<DialogEngine>();
-                var receivedResult = await handler.GetSpeechAsync(activity);
+                DialogEngine handler = container.GetInstance<DialogEngine>();
 
-                var intencionManager = container.GetInstance<IIntencion>();
+                Result receivedResult = await handler.GetSpeechAsync(activity, sesion, context);
+
+                IIntencion intencionManager = container.GetInstance<IIntencion>();
                 /*
                  * 4.1.5   El Sistema valida si existe una “Intención de Consulta” para la pregunta 
                  * ingresada por el alumno a través del Agente de Procesamiento de Lenguaje Natural. 
@@ -115,11 +122,17 @@ namespace FormBot.Dialogs
                     */
                     if (receivedResult.ExistValidIntent)
                     {
-                        var intent = receivedResult.GetValidIntent();
-                        var intencion = intencionManager.ObtenerCategoria(intent);
+                        string intent = receivedResult.GetValidIntent();
+                        Intencion intencion = intencionManager.ObtenerCategoria(intent);
 
-                        context.UserData.SetValue<Result>("result", receivedResult);
-                        context.UserData.SetValue<Intencion>("intencion", intencion);
+                        context.UserData.SetValue("result", receivedResult);
+
+                        if (string.IsNullOrEmpty(intencion.Nombre))
+                        {
+                            intencion.Nombre = intent;
+                        }
+
+                        context.UserData.SetValue("intencion", intencion);
 
                         if (!string.IsNullOrEmpty(intencion.Nombre))
                         {
@@ -163,6 +176,36 @@ namespace FormBot.Dialogs
                                 case AppConstant.Intencion.DEFAULT:
                                     context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
                                     break;
+
+                                case "Notas":
+                                    string dfParams = receivedResult.Intents[0].Parameters;
+                                    string dfContext = receivedResult.OutputContexts;
+
+                                    Dictionary<string, string> listParams = JsonConvert.DeserializeObject<Dictionary<string, string>>(dfParams);
+
+                                    string course = listParams["course"];
+                                    string assignment = listParams["assignment"];
+
+                                    if (!string.IsNullOrEmpty(course))
+                                    {
+                                        context.UserData.SetValue("course", course);
+                                    }
+
+                                    if (!string.IsNullOrEmpty(assignment))
+                                    {
+                                        context.UserData.SetValue("assignment", assignment);
+                                    }
+
+
+                                    if (receivedResult.Intents[0].AllRequiredParamsPresent)
+                                    {
+
+                                    }
+
+
+                                    await context.PostAsync(receivedResult.Speech);
+                                    context.Wait(MessageReceivedAsync);
+                                    break;
                                 default:
                                     /*
                                      * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
@@ -205,9 +248,9 @@ namespace FormBot.Dialogs
                 else
                     context.Call(new SinScoreDialog(), ResumeAfterUnknownAcademicIntent);
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine(ex.Message);
             }
 
         }
@@ -233,8 +276,10 @@ namespace FormBot.Dialogs
             ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
 
             // 4.1.14  El caso de uso finaliza
-            await Task.Delay(2000);
+            //await Task.Delay(2000);
             //ShowPrompt(context);
+
+            context.Done(this);
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
@@ -257,11 +302,12 @@ namespace FormBot.Dialogs
              */
             var solicitud = context.UserData.GetValueOrDefault<Solicitud>("solicitud");
             var userName = context.UserData.GetValue<Sesion>("sesion").CodigoAlumno;
+
             Result receivedResult;
-            context.UserData.TryGetValue<Result>("result", out receivedResult);
+            context.UserData.TryGetValue("result", out receivedResult);
 
             Intencion intent;
-            context.UserData.TryGetValue<Intencion>("intencion", out intent);
+            context.UserData.TryGetValue("intencion", out intent);
 
 
             if (solicitud != null && receivedResult != null)

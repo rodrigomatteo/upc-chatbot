@@ -54,7 +54,7 @@ namespace FormBot.Util
                     this.trace.WriteLine(inner);
                 }
 
-                throw;
+                Console.WriteLine(ex.Message);
             }
         }
     }

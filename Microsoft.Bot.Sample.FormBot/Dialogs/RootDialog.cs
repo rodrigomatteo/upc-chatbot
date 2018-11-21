@@ -14,14 +14,27 @@ namespace FormBot.Dialogs
     {
         
         public async Task StartAsync(IDialogContext context)
-        {            
+        {
+
             var message = context.MakeMessage();
             var attachment = GetInfoCard();
             message.Attachments.Add(attachment);
 
             await context.PostAsync(message);
 
-            context.Wait(ShowStartButton); 
+            context.Wait(ShowStartButton);
+
+            return;
+
+            //PromptDialog.Choice(
+            //    context: context,
+            //    resume: ChoiceReceivedAsync,
+            //    options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
+            //    prompt: "Presiona el botón para iniciar"
+            //);
+
+            //context.Done(true);
+            //return;
         }
 
         public enum StartOptions
@@ -29,15 +42,24 @@ namespace FormBot.Dialogs
             Iniciar
         }
 
-        public virtual async Task ShowStartButton(IDialogContext context, IAwaitable<IMessageActivity> activity)
+        public virtual Task ShowStartButton(IDialogContext context, IAwaitable<IMessageActivity> activity)
         {
-            PromptDialog.Choice(
-                context: context,
-                resume: ChoiceReceivedAsync,
-                options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
-                prompt: "Presiona el botón para iniciar",
-                retry: "Por favor intenta de nuevo"
-            );
+            //PromptDialog.Choice(
+            //    context: context,
+            //    resume: ChoiceReceivedAsync,
+            //    options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
+            //    prompt: "Presiona el botón para iniciar",
+            //    retry: "Por favor intenta de nuevo"
+            //);
+
+            var sesionData = context.UserData.GetValueOrDefault<Sesion>("sesion");
+
+            if (sesionData != null)
+                context.Call(new WelcomeDialog(), EndWelcome);
+            else
+                context.Done(true);
+
+            return Task.CompletedTask;
         }
 
         public virtual async Task ChoiceReceivedAsync(IDialogContext context, IAwaitable<StartOptions> activity)

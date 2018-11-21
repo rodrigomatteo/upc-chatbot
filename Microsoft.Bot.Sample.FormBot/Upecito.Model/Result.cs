@@ -18,6 +18,8 @@ namespace Upecito.Model
         public int Status { get; set; }
         public List<Intent> Intents { get; set; }
 
+        public string OutputContexts { get; set; }
+
         public bool ExistIntent => Intents.Count >= 1;
 
         public bool ExistValidIntent
@@ -37,5 +39,7 @@ namespace Upecito.Model
         public string IntentId { get; set; }
         public string IntentName { get; set; }
         public float Score { get; set; }
+        public string Parameters { get; set; }
+        public bool AllRequiredParamsPresent { get; set; }
     }
 }

@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Microsoft.Bot.Sample.FormBot"
+    "\\Microsoft.Bot.Sample.FormBot",
+    "\\Microsoft.Bot.Sample.FormBot\\Models"
   ],
-  "SelectedNode": "\\Microsoft.Bot.Sample.FormBot",
+  "SelectedNode": "\\Microsoft.Bot.Sample.FormBot\\Web.config",
   "PreviewInSolutionExplorer": false
 }

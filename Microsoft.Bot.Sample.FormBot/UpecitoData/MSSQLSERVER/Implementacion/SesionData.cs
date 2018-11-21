@@ -17,10 +17,11 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
     {
         public Sesion Crear(long idAlumno)
         {
+            Sesion sesion = new Sesion();
+
             try
             {
-                var sesion = new Sesion();
-                var dateTimeNow = ConvertidorUtil.GmtToPacific(DateTime.Now);
+                DateTime dateTimeNow = ConvertidorUtil.GmtToPacific(DateTime.Now);
 
                 using (var cnn = MSSQLSERVERCnx.MSSqlCnx())
                 {
@@ -51,12 +52,13 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     }
                 }
 
-                return sesion;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Console.WriteLine(ex.Message);
             }
+
+            return sesion;
         }
 
         public Sesion Cerrar(long idSesion)
