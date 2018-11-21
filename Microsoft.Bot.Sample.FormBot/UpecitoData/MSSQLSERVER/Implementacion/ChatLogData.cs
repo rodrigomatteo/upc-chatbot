@@ -31,10 +31,11 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pIdAlumno", model.IdAlumno);
                     cmd.Parameters.AddWithValue("@pFecha", model.Fecha);
                     cmd.Parameters.AddWithValue("@pTexto", model.Texto);
-                    cmd.Parameters.AddWithValue("@pIntencion", model.Intencion);
+                    cmd.Parameters.AddWithValue("@pIntencion", model.Intencion?? string.Empty);
                     cmd.Parameters.AddWithValue("@pFuente", model.Fuente);
-                    cmd.Parameters.AddWithValue("@pContexto", model.Contexto);
-                    cmd.Parameters.AddWithValue("@pParametros", model.Parametros);
+                    cmd.Parameters.AddWithValue("@pTipo", model.Tipo ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@pContexto", model.Contexto ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@pParametros", model.Parametros ?? string.Empty);
                     cmd.Parameters.AddWithValue("@pConfianza", model.Confianza);
 
                     SqlDataReader rd = cmd.ExecuteReader();
@@ -46,14 +47,16 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                             output = new ChatLog
                             {
                                 IdChatLog = rd.GetInt32(rd.GetOrdinal("IDCHATLOG")),
+                                IdSesion = rd.GetInt32(rd.GetOrdinal("IDSESION")),
                                 IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
                                 Fecha = rd.GetDateTime(rd.GetOrdinal("FECHA")),
                                 Texto = rd.GetString(rd.GetOrdinal("TEXTO")),
                                 Intencion = rd.GetString(rd.GetOrdinal("INTENCION")),
                                 Fuente = rd.GetString(rd.GetOrdinal("FUENTE")),
+                                Tipo = rd.GetString(rd.GetOrdinal("TIPO")),
                                 Contexto = rd.GetString(rd.GetOrdinal("CONTEXTO")),
                                 Parametros = rd.GetString(rd.GetOrdinal("PARAMETROS")),
-                                Confianza = rd.GetDecimal(rd.GetOrdinal("CONFIANZA")),
+                                Confianza = rd.GetDecimal(rd.GetOrdinal("CONFIANZA"))
                             };
                         }
                     }

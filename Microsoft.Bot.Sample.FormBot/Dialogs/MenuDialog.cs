@@ -14,6 +14,8 @@ using Upecito.Model;
 using FormBot.Dialogflow;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using FormBot.Services;
+using Upecito.Bot.Upecito.Helpers;
 
 namespace FormBot.Dialogs
 {
@@ -98,7 +100,7 @@ namespace FormBot.Dialogs
             DependencyResolver.UnityConfig.RegisterTypes(container);
            
             var solicitudManager = container.GetInstance<ISolicitud>();
-            var solicitud = solicitudManager.CrearSolicitud(Convert.ToInt32(tipoConsulta), userId, null, idSesion, activity.Text, codigoAlumno);
+            Solicitud solicitud = solicitudManager.CrearSolicitud(Convert.ToInt32(tipoConsulta), userId, null, idSesion, activity.Text, codigoAlumno);
 
             context.UserData.SetValue("solicitud", solicitud);
 
@@ -149,12 +151,19 @@ namespace FormBot.Dialogs
                                  * 4.1.8	Si la “Intención de Consulta” es “Calendario Académico”, 
                                  * el sistema extiende el caso de uso: GSAV_CUS006_Consultar Calendario Académico
                                 */
-                                case AppConstant.Intencion.CALENDARIO:
-                                    context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
-                                    break;
+                                case AppConstant.Intencion.CREDITOS:
                                 case AppConstant.Intencion.ORGANIZACION:
-                                    context.Call(new OrganizacionDialog(), ResumeAfterSuccessAcademicIntent);
+                                case AppConstant.Intencion.CALENDARIO:
+                                    //context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
+                                    var message = context.MakeMessage();
+                                    message.Text = $"Esta es una consulta de: {intencion.Nombre}";
+                                    await context.PostAsync(message);
+                                    context.Wait(MessageReceivedAsync);
                                     break;
+
+                                //case AppConstant.Intencion.ORGANIZACION:
+                                //    context.Call(new OrganizacionDialog(), ResumeAfterSuccessAcademicIntent);
+                                //    break;
                                 /*
                                 * 4.1.9	Si la “Intención de Consulta” es “Organización de Aula Virtual”, “Matricula”, 
                                 * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
@@ -170,9 +179,9 @@ namespace FormBot.Dialogs
                                  * 4.1.10  Si la “Intención de Consulta” es “Créditos de un Curso”, el sistema extiende el caso de uso: 
                                  * GSAV_CUS008_Consultar Créditos de un Curso
                                 */
-                                case AppConstant.Intencion.CREDITOS:
-                                    context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
-                                    break;
+                                //case AppConstant.Intencion.CREDITOS:
+                                //    context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
+                                //    break;
                                 case AppConstant.Intencion.DEFAULT:
                                     context.Call(new NoRespuestaDialog(), ResumeAfterFailedAcademicIntent);
                                     break;
@@ -228,7 +237,7 @@ namespace FormBot.Dialogs
 
                             await context.PostAsync(message);
 
-                            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
+                            await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
 
                             context.Wait(ResumeGetAcademicIntent);
                         }
@@ -257,14 +266,14 @@ namespace FormBot.Dialogs
 
         private async Task ResumeAfterSuccessAcademicIntent(IDialogContext context, IAwaitable<object> result)
         {
-            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.ATENDIDO);
+            await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.ATENDIDO);
             // 4.1.14  El caso de uso finaliza
             context.Wait(MessageReceivedAsync);
         }
 
         private async Task ResumeAfterUnknownAcademicIntent(IDialogContext context, IAwaitable<object> result)
         {
-            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
+            await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
 
             // 4.1.14  El caso de uso finaliza
             await Task.Delay(2000);
@@ -273,7 +282,7 @@ namespace FormBot.Dialogs
 
         private async Task ResumeAfterFailedAcademicIntent(IDialogContext context, IAwaitable<object> result)
         {
-            ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
+            await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
 
             // 4.1.14  El caso de uso finaliza
             //await Task.Delay(2000);
@@ -287,7 +296,7 @@ namespace FormBot.Dialogs
             await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
         }
 
-        private void ActualizarSolicitud(IDialogContext context, string estado)
+        private async Task ActualizarSolicitud(IDialogContext context, string estado)
         {
             var container = new Container();
             DependencyResolver.UnityConfig.RegisterTypes(container);
@@ -300,8 +309,10 @@ namespace FormBot.Dialogs
             /*
              * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
              */
-            var solicitud = context.UserData.GetValueOrDefault<Solicitud>("solicitud");
-            var userName = context.UserData.GetValue<Sesion>("sesion").CodigoAlumno;
+            Solicitud solicitud = context.UserData.GetValueOrDefault<Solicitud>("solicitud");
+            Sesion sesion = context.UserData.GetValue<Sesion>("sesion");
+
+            string userName = sesion.CodigoAlumno;
 
             Result receivedResult;
             context.UserData.TryGetValue("result", out receivedResult);
@@ -321,6 +332,9 @@ namespace FormBot.Dialogs
                 var solucion = respuestaPersonalizada.Equals(string.Empty) ? receivedResult.Speech : respuestaPersonalizada;
 
                 solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName);
+
+                bool IsEmailSent = await SmtpEmailSender.SendEmailAsync("upc.chatbot@gmail.com", "parismiguel@gmail.com", "UPECITO - Email test", Helpers.EmailTeacher(int.Parse(sesion.CodigoAlumno), sesion.NombreApePaterno, solucion));
+
             }
         }
     }

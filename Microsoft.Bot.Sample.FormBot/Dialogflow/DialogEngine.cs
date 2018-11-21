@@ -1,10 +1,8 @@
 ﻿using Api.Ai.ApplicationService.Factories;
 using Api.Ai.Domain.Service.Factories;
 using FormBot.Models;
-using FormBot.Services;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Dialogflow.V2;
-using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Auth;
@@ -12,16 +10,12 @@ using Grpc.Core;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using SimpleInjector;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using Upecito.Interface;
+using Upecito.Bot.Upecito.Helpers;
 using Upecito.Model;
 using Intent = Upecito.Model.Intent;
 
@@ -163,56 +157,10 @@ namespace FormBot.Dialogflow
             result.Intents.Add(entity);
 
             //TODO: Create chatlog record
-            PersistChatLog(result, response, sesion);
-
-            //TODO: bool IsEmailSent = await SmtpEmailSender.SendEmailAsync("upc.chatbot@gmail.com", "parismiguel@gmail.com", "UPECITO - Email test", JsonConvert.SerializeObject(result));
-        }
-
-        private void PersistChatLog(Result result, QueryResult response, Sesion sesion)
-        {
-            try
-            {
-                var container = new Container();
-                DependencyResolver.UnityConfig.RegisterTypes(container);
-                IChatLog chatlog = container.GetInstance<IChatLog>();
-
-                ChatLog input = new ChatLog
-                {
-                    IdSesion = (int)sesion.IdSesion,
-                    IdAlumno = (int)sesion.IdAlumno,
-                    Fecha = DateTime.Now,
-                    Texto = response.QueryText,
-                    Intencion = response.Intent.DisplayName,
-                    Fuente = "Usuario",
-                    Contexto = response.OutputContexts.ToString(),
-                    Parametros = response.Parameters.ToString(),
-                    Confianza = (decimal)response.IntentDetectionConfidence
-
-                };
-
-                ChatLog chatLogInputData = chatlog.CrearChatLog(input);
-
-                ChatLog output = new ChatLog
-                {
-                    IdSesion = (int)sesion.IdSesion,
-                    IdAlumno = (int)sesion.IdAlumno,
-                    Fecha = DateTime.Now,
-                    Texto = response.FulfillmentText,
-                    Intencion = response.Intent.DisplayName,
-                    Fuente = "Bot",
-                    Contexto = response.OutputContexts.ToString(),
-                    Parametros = response.Parameters.ToString(),
-                    Confianza = (decimal)response.IntentDetectionConfidence
-
-                };
-
-                ChatLog chatLogOutputData = chatlog.CrearChatLog(output);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            Helpers.PersistChatLog(response, sesion, response.QueryText, "Usuario", null);
+            Helpers.PersistChatLog(response, sesion, response.FulfillmentText, "Bot", "DialogFlow");
 
         }
-    }
+
+ }
 }

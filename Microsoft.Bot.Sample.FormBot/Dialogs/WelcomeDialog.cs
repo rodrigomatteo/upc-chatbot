@@ -3,7 +3,9 @@ using Microsoft.Bot.Builder.Dialogs;
 using SimpleInjector;
 using System;
 using System.Threading.Tasks;
+using Upecito.Bot.Upecito.Helpers;
 using Upecito.Interface;
+using Upecito.Model;
 
 namespace FormBot.Dialogs
 {
@@ -12,19 +14,27 @@ namespace FormBot.Dialogs
     {
         public async Task StartAsync(IDialogContext context)
         {
-            //TODO: var userId = context.Activity.From.Id;
-            var userId = "4";
+            string userId = context.Activity.From.Id;
+            //string userId = "4";
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                context.Done(true);
+                return;
+            }
 
             var container = new Container();
             DependencyResolver.UnityConfig.RegisterTypes(container);
 
             var sesion = container.GetInstance<ISesion>();
-            var sesionData = sesion.CrearSesion(ConvertidorUtil.GetLong(userId));
+            Sesion sesionData = sesion.CrearSesion(ConvertidorUtil.GetLong(userId));
 
             var message = context.MakeMessage();
             message.Text = $"Hola {sesionData.Nombre}, soy UPECITO el asesor del Aula Virtual de UPC.Te puedo ayudar con tus consultas académicas y Técnicas del Aula Virtual.";
 
             await context.PostAsync(message);
+
+            Helpers.PersistChatLog(null, sesionData, message.Text, "Bot", "BotFramework");
 
             if (sesionData != null)
             {

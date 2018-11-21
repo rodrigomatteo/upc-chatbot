@@ -340,6 +340,7 @@
     <Compile Include="Upecito.Business\SesionManager.cs" />
     <Compile Include="Upecito.Business\ChatLogManager.cs" />
     <Compile Include="Upecito.Business\SolicitudManager.cs" />
+    <Compile Include="Upecito.Helpers\Helpers.cs" />
     <Compile Include="Upecito.Interface\IIntencion.cs" />
     <Compile Include="Upecito.Interface\ISesion.cs" />
     <Compile Include="Upecito.Interface\IChatLog.cs" />
