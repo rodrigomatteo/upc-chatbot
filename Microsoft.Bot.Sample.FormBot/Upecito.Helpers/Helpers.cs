@@ -5,13 +5,16 @@ using Upecito.Interface;
 using Upecito.Model;
 using FormBot.DependencyResolver;
 using System.Text;
+using Upecito.Model.Common;
 
 namespace Upecito.Bot.Upecito.Helpers
 {
     public class Helpers
     {
-        public static void PersistChatLog(QueryResult response, Sesion sesion, string text, string source, string type)
+        public static Response PersistChatLog(QueryResult response, Sesion sesion, string text, string source, string type)
         {
+            Response output = new Response();
+
             try
             {
                 var container = new Container();
@@ -40,6 +43,10 @@ namespace Upecito.Bot.Upecito.Helpers
 
                 ChatLog chatLogInputData = chatlog.CrearChatLog(input);
 
+                output.Status = true;
+                output.Type = Enums.ResponseType.success;
+                output.Data = chatLogInputData;
+
                 //ChatLog output = new ChatLog
                 //{
                 //    IdSesion = (int)sesion.IdSesion,
@@ -61,6 +68,7 @@ namespace Upecito.Bot.Upecito.Helpers
                 Console.WriteLine(ex.Message);
             }
 
+            return output;
         }
 
         public static string EmailTeacher(int idAlumno, string fullNameStudent, string query)

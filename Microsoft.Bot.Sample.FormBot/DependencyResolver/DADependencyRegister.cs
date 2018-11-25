@@ -23,6 +23,7 @@ namespace FormBot.DependencyResolver
             container.RegisterSingleton<ISesion, SesionManager>();
 
             container.RegisterSingleton<IChatLog, ChatLogManager>();
+            container.RegisterSingleton<ICurso, CursoManager>();
 
             if (database.Equals("ORACLE"))
             {
@@ -37,6 +38,8 @@ namespace FormBot.DependencyResolver
                 container.Register<ISolicitudData, Upecito.Data.MSSQLSERVER.Implementacion.SolicitudData>();
                 container.Register<IIntencionData, Upecito.Data.MSSQLSERVER.Implementacion.IntencionData>();
                 container.Register<IChatLogData, Upecito.Data.MSSQLSERVER.Implementacion.ChatLogData>();
+                container.Register<ICursoData, Upecito.Data.MSSQLSERVER.Implementacion.CursoData>();
+                container.Register<IActividadData, Upecito.Data.MSSQLSERVER.Implementacion.ActividadData>();
             }
         }
     }
