@@ -20,10 +20,10 @@ namespace Upecito.Business
             return solicitudData.Crear(idCanalAtencion, idAlumno, idCurso, idSesion, consulta, usuario);
         }
 
-        public Solicitud Actualizar(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario)
+        public Solicitud Actualizar(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso)
         {
             var solicitudData = container.GetInstance<ISolicitudData>();
-            return solicitudData.Atender(idSolicitud, idIntencion, solucion, estado, usuario);
+            return solicitudData.Atender(idSolicitud, idIntencion, solucion, estado, usuario, idCurso);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 {
     public class SolicitudData : BaseData, ISolicitudData
     {
-        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario)
+        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso)
         {
             var solicitud = new Solicitud();
             try
@@ -30,6 +30,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pIdIntencion", idIntencion);
                     cmd.Parameters.AddWithValue("@pSolucion", solucion);
                     cmd.Parameters.AddWithValue("@pEstado", estado);
+                    cmd.Parameters.AddWithValue("@pIdCurso", idCurso);
                     cmd.Parameters.AddWithValue("@pUsuario", usuario);
                     cmd.Parameters.AddWithValue("@pFechaActualiza", ConvertidorUtil.GmtToPacific(DateTime.Now));
 
@@ -42,8 +43,11 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                             solicitud = new Solicitud
                             {
                                 IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
+                                IdCanalAtencion = rd.GetInt32(rd.GetOrdinal("IDCANALATENCION")),
                                 IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
                                 IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
+                                IdSesion = rd.GetInt32(rd.GetOrdinal("IDSESION")),
+                                LogUsuario = rd.GetString(rd.GetOrdinal("LOGUSUARIO")),
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
                                 FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
                             };
@@ -56,6 +60,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex);
             }
 
             return solicitud;
@@ -94,8 +99,11 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                             solicitud = new Solicitud
                             {
                                 IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
+                                IdCanalAtencion = rd.GetInt32(rd.GetOrdinal("IDCANALATENCION")),
                                 IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
                                 IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
+                                IdSesion = rd.GetInt32(rd.GetOrdinal("IDSESION")),
+                                LogUsuario = rd.GetString(rd.GetOrdinal("LOGUSUARIO")),
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
                                 FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
                             };
@@ -107,8 +115,10 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             }
             catch (Exception ex)
             {
-                throw ex;
+                LogError(ex);
+                //throw ex;
             }
+
             return solicitud;
         }
     }

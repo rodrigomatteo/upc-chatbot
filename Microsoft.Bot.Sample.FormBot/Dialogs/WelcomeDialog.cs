@@ -22,8 +22,8 @@ namespace FormBot.Dialogs
             string userId = context.Activity.From.Id;
             ////////object channelData = context.Activity.ChannelData;
 
-            ////////TODO: Manual override for testing purposes
-            ////////userId = "1";
+            ////TODO: Manual override for testing purposes
+            //userId = "1";
 
             ////////if (string.IsNullOrEmpty(userId))
             ////////{
@@ -54,10 +54,10 @@ namespace FormBot.Dialogs
                 Sesion sesionData = context.UserData.GetValueOrDefault<Sesion>("sesion");
 
                 var message = context.MakeMessage();
-                var attachment = RootDialog.GetInfoCard();
-                message.Attachments.Add(attachment);
+                //var attachment = RootDialog.GetInfoCard();
+                //message.Attachments.Add(attachment);
 
-                await context.PostAsync(message);
+                //await context.PostAsync(message);
 
                 message = context.MakeMessage();
                 message.Text = $"Hola {sesionData.Nombre}, soy UPECITO el asesor del Aula Virtual de UPC. Te puedo ayudar con tus consultas académicas y Técnicas del Aula Virtual.";
@@ -128,10 +128,10 @@ namespace FormBot.Dialogs
                 Sesion sesionData = sesion.CrearSesion(ConvertidorUtil.GetLong(userId));
 
                 var message = context.MakeMessage();
-                var attachment = RootDialog.GetInfoCard();
-                message.Attachments.Add(attachment);
+                //var attachment = RootDialog.GetInfoCard();
+                //message.Attachments.Add(attachment);
 
-                await context.PostAsync(message);
+                //await context.PostAsync(message);
 
                 message = context.MakeMessage();
                 message.Text = $"Hola {sesionData.Nombre}, soy UPECITO el asesor del Aula Virtual de UPC. Te puedo ayudar con tus consultas académicas y Técnicas del Aula Virtual.";

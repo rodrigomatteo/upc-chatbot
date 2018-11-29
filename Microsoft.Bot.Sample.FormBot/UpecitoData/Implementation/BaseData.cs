@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Upecito.Data.Implementation
 {
@@ -10,7 +6,7 @@ namespace Upecito.Data.Implementation
     {
         protected const string ConnectionName = "MyConnectionString";
 
-        protected void LogError(Exception exc)
+        public static void LogError(Exception exc)
         {
             var iexc = exc.InnerException;
 

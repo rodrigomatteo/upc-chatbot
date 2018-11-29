@@ -1,8 +1,6 @@
-﻿using System;
-using System.Configuration;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Data;
-using Oracle.ManagedDataAccess.Client;
-using Simple.Data;
 using Upecito.Data.Common;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
@@ -44,8 +42,8 @@ namespace Upecito.Data.Oracle.Implementacion
                         {
                             solicitud_ = new Solicitud
                             {
-                                IdSolicitud = rd.GetInt64(rd.GetOrdinal("IDSOLICITUD")),
-                                IdAlumno = rd.GetInt64(rd.GetOrdinal("IDALUMNO")),
+                                IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
+                                IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
                                 IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
                                 FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
@@ -65,7 +63,7 @@ namespace Upecito.Data.Oracle.Implementacion
             return solicitud_;
         }
 
-        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario)
+        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso)
         {
             var solicitud = new Solicitud();
             try

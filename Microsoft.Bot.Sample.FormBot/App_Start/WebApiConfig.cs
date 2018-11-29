@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Web.Http;
+using Upecito.Data.Implementation;
 
 namespace SimpleEchoBot
 {
@@ -39,6 +40,7 @@ namespace SimpleEchoBot
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                BaseData.LogError(ex);
             }
         }
     }

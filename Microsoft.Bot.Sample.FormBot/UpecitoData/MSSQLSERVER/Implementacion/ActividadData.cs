@@ -4,14 +4,16 @@ using System.Data.SqlClient;
 using Upecito.Data.Common;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Upecito.Data.MSSQLSERVER.Implementacion
 {
     public class ActividadData : BaseData, IActividadData
     {
-        public ActivitiesByCourseViewModel GetActivitiesByCourse(int IdAlumno)
+        public List<ActivitiesByCourseViewModel> GetActivitiesByCourse(int idAlumno)
         {
-            ActivitiesByCourseViewModel output = new ActivitiesByCourseViewModel();
+            List<ActivitiesByCourseViewModel> output = new List<ActivitiesByCourseViewModel>();
 
             try
             {
@@ -20,7 +22,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     SqlCommand cmd = null;
                     cnn.Open();
 
-                    string cmdText = "SELECT A.CODIGOALUMNO, S.DESCRIPCION, C.NOMBRE ,TA.IDTIPOACTIVIDAD, TA.DESCRIPCION , AC.NUMEROACTIVIDAD " +
+                    string cmdText = "SELECT A.CODIGOALUMNO, S.DESCRIPCION, C.NOMBRE, TA.IDTIPOACTIVIDAD, TA.DESCRIPCION, AC.NUMEROACTIVIDAD, AC.FECHAACTIVIDAD " +
                             "FROM [GSAV].[ACTIVIDAD] AC " +
 			                "INNER JOIN [GSAV].[TIPO_ACTIVIDAD] TA " +
 			                "ON AC.IDTIPOACTIVIDAD = TA.IDTIPOACTIVIDAD " +
@@ -30,9 +32,19 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                             "ON S.IDCURSO = C.IDCURSO " +
                             "INNER JOIN GSAV.SECCION_ALUMNO SA ON SA.IDSECCION = S.IDSECCION " +
                             "INNER JOIN GSAV.ALUMNO A ON SA.IDALUMNO = A.IDALUMNO" +
-                            "WHERE A.IDALUMNO = " + IdAlumno;
+                            "WHERE A.IDALUMNO = " + idAlumno;
 
-                    cmd = new SqlCommand(cmdText, cnn);
+                    //cmd = new SqlCommand(cmdText, cnn)
+                    //{
+                    //    CommandType = CommandType.Text
+                    //};
+
+                    cmd = new SqlCommand(SP.GSAV_SP_ACTIVIDADESCURSOALUMNO, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    cmd.Parameters.AddWithValue("@pIdAlumno", idAlumno);
 
                     SqlDataReader rd = cmd.ExecuteReader();
 
@@ -40,15 +52,16 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     {
                         while (rd.Read())
                         {
-                            output = new ActivitiesByCourseViewModel
+                            output.Add(new ActivitiesByCourseViewModel
                             {
                                 CodigoAlumno = rd.GetString(rd.GetOrdinal("CODIGOALUMNO")),
                                 Seccion = rd.GetString(rd.GetOrdinal("SECCION")),
-                                Nombre = rd.GetString(rd.GetOrdinal("NOMBRE")),
+                                Curso = rd.GetString(rd.GetOrdinal("NOMBRE")),
                                 IdTipoActividad = rd.GetInt32(rd.GetOrdinal("IDTIPOACTIVIDAD")),
-                                Actividad = rd.GetString(rd.GetOrdinal("ACTIVIDAD")),
-                                NumeroActividad = rd.GetInt32(rd.GetOrdinal("NUMEROACTIVIDAD"))
-                            };
+                                Actividad = rd.GetString(rd.GetOrdinal("DESCRIPCION")),
+                                NumeroActividad = rd.GetInt32(rd.GetOrdinal("NUMEROACTIVIDAD")),
+                                FechaActividad = rd.GetDateTime(rd.GetOrdinal("FECHAACTIVIDAD"))
+                            });
                         }
                     }
 
@@ -58,6 +71,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex);
             }
 
             return output;

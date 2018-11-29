@@ -1,4 +1,5 @@
 ﻿using SimpleInjector;
+using System.Collections.Generic;
 using Upecito.Data.Interface;
 using Upecito.Interface;
 using Upecito.Model.ViewModel;
@@ -14,10 +15,10 @@ namespace Upecito.Business
             this.container = container;
         }
 
-        public CourseByModuleViewModel GetCourseByModuleActive(int IdCurso)
+        public List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno, string curso)
         {
-            var data = container.GetInstance<ICursoData>();
-            return data.GetCourseByModuleActive(IdCurso);
+            var cursoData = container.GetInstance<ICursoData>();
+            return cursoData.GetCourseByModuleActive(idAlumno, curso);
         }
     }
 }

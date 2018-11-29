@@ -4,14 +4,16 @@ using System.Data.SqlClient;
 using Upecito.Data.Common;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Upecito.Data.MSSQLSERVER.Implementacion
 {
     public class CursoData : BaseData, ICursoData
     {
-        public CourseByModuleViewModel GetCourseByModuleActive(int IdAlumno)
+        public List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno, string curso)
         {
-            CourseByModuleViewModel output = new CourseByModuleViewModel();
+            List<CourseByModuleViewModel> output = new List<CourseByModuleViewModel>();
 
             try
             {
@@ -20,14 +22,22 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     SqlCommand cmd = null;
                     cnn.Open();
 
-                    string cmdText = "SELECT A.CODIGOALUMNO, C.CODIGO, C.NOMBRE, C.ACTIVO FROM GSAV.CURSO C " +
-		                     "INNER JOIN GSAV.SECCION S ON C.IDCURSO = S.IDCURSO " +
-                             "INNER JOIN GSAV.MODULO M ON S.IDMODULO = M.IDMODULO " +
-                             "INNER JOIN GSAV.SECCION_ALUMNO SA ON SA.IDSECCION = S.IDSECCION " +
-                             "INNER JOIN GSAV.ALUMNO A ON SA.IDALUMNO = A.IDALUMNO " +
-                             "WHERE M.VIGENTE = 1 AND A.IDALUMNO = " + IdAlumno;
+                    cmd = new SqlCommand(SP.GSAV_SP_DOCENTECURSO, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
 
-                    cmd = new SqlCommand(cmdText, cnn);
+                    cmd.Parameters.AddWithValue("@pIdAlumno", idAlumno);
+                    cmd.Parameters.AddWithValue("@pCurso", curso);
+
+                    //string cmdText = "SELECT A.CODIGOALUMNO, C.CODIGO, C.NOMBRE, C.ACTIVO FROM GSAV.CURSO C " +
+		                  //   "INNER JOIN GSAV.SECCION S ON C.IDCURSO = S.IDCURSO " +
+                    //         "INNER JOIN GSAV.MODULO M ON S.IDMODULO = M.IDMODULO " +
+                    //         "INNER JOIN GSAV.SECCION_ALUMNO SA ON SA.IDSECCION = S.IDSECCION " +
+                    //         "INNER JOIN GSAV.ALUMNO A ON SA.IDALUMNO = A.IDALUMNO " +
+                    //         "WHERE M.VIGENTE = 1 AND A.IDALUMNO = " + IdAlumno;
+
+                    //cmd = new SqlCommand(cmdText, cnn);
 
                     SqlDataReader rd = cmd.ExecuteReader();
 
@@ -35,13 +45,16 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     {
                         while (rd.Read())
                         {
-                            output = new CourseByModuleViewModel
+                            output.Add(new CourseByModuleViewModel
                             {
                                 CodigoAlumno = rd.GetString(rd.GetOrdinal("CODIGOALUMNO")),
                                 Codigo = rd.GetString(rd.GetOrdinal("CODIGO")),
-                                Nombre = rd.GetString(rd.GetOrdinal("NOMBRE")),
-                                Activo = rd.GetBoolean(rd.GetOrdinal("ACTIVO"))
-                            };
+                                Curso = rd.GetString(rd.GetOrdinal("CURSO")),
+                                IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
+                                Activo = rd.GetBoolean(rd.GetOrdinal("ACTIVO")),
+                                Seccion = rd.GetString(rd.GetOrdinal("SECCION")),
+                                Email = rd.GetString(rd.GetOrdinal("EMAIL"))
+                            });
                         }
                     }
 
@@ -51,6 +64,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex);
             }
 
             return output;

@@ -1,9 +1,10 @@
-﻿using Upecito.Model.ViewModel;
+﻿using System.Collections.Generic;
+using Upecito.Model.ViewModel;
 
 namespace Upecito.Data.Interface
 {
     public interface IActividadData
     {
-        ActivitiesByCourseViewModel GetActivitiesByCourse(int IdAlumno);
+        List<ActivitiesByCourseViewModel> GetActivitiesByCourse(int IdAlumno);
     }
 }

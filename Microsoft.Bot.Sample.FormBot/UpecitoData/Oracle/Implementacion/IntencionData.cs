@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Configuration;
 using System.Data;
-using Oracle.ManagedDataAccess.Client;
-using Simple.Data;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
 using Upecito.Model;
@@ -37,7 +36,7 @@ namespace Upecito.Data.Oracle.Implementacion
                             categoria = new Intencion()
                             {
                                 IdIntencion = rd.GetInt32(rd.GetOrdinal("IDINTENCIONCONSULTA")),
-                                Nombre = rd.GetString(rd.GetOrdinal("NOMBRE"))
+                                NombreBase = rd.GetString(rd.GetOrdinal("NOMBRE"))
                             };
                         }
                     }

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
+using Upecito.Data.Implementation;
 
 namespace FormBot.Util
 {
@@ -51,10 +52,13 @@ namespace FormBot.Util
                 }
                 catch (Exception inner)
                 {
-                    this.trace.WriteLine(inner);
+                    trace.WriteLine(inner);
+                    BaseData.LogError(inner);
+                    await this.botToUser.PostAsync("Hay un error");
                 }
 
                 Console.WriteLine(ex.Message);
+                BaseData.LogError(ex);
             }
         }
     }

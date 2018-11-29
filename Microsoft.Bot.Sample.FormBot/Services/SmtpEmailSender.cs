@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Upecito.Data.Implementation;
 
 namespace FormBot.Services
 {
@@ -20,6 +21,7 @@ namespace FormBot.Services
                 using (var client = SmtpClientFactory.GetClient(SmtpClientFactory.ClientType.Gmail, credentials, true))
                 {
                     MailMessage message = new MailMessage(from, to, subject, body);
+                    message.IsBodyHtml = true;
 
                     await client.Send(message);
 
@@ -30,6 +32,7 @@ namespace FormBot.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                BaseData.LogError(ex);
             }
 
             return false;

@@ -16,6 +16,7 @@ using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 using Upecito.Bot.Upecito.Helpers;
+using Upecito.Data.Implementation;
 using Upecito.Model;
 using Intent = Upecito.Model.Intent;
 
@@ -132,6 +133,7 @@ namespace FormBot.Dialogflow
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                BaseData.LogError(ex);
             }
 
             return result;
@@ -156,7 +158,7 @@ namespace FormBot.Dialogflow
 
             result.Intents.Add(entity);
 
-            //TODO: Create chatlog record
+            //Create chatlog record
             Helpers.PersistChatLog(response, sesion, response.QueryText, "Usuario", null);
             Helpers.PersistChatLog(response, sesion, response.FulfillmentText, "Bot", "DialogFlow");
 

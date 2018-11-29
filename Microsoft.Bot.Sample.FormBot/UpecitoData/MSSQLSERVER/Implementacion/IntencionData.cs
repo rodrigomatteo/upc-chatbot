@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Upecito.Data.Common;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
@@ -38,7 +34,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                         if (rd.Read())
                         {
                             intencion.IdIntencion = rd.GetInt32(rd.GetOrdinal("IDINTENCIONCONSULTA"));
-                            intencion.Nombre = rd.GetString(rd.GetOrdinal("INTENCION_BASE"));                          
+                            intencion.NombreBase = rd.GetString(rd.GetOrdinal("INTENCION_BASE"));                          
                         }
                     }
                 }
@@ -46,6 +42,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex);
             }
 
             return intencion;

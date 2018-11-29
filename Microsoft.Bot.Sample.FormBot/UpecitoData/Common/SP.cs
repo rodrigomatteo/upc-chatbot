@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Upecito.Data.Common
+﻿namespace Upecito.Data.Common
 {
     public class SP
     {
@@ -15,5 +9,7 @@ namespace Upecito.Data.Common
         public static string GSAV_SP_BUSCARINTENCIONCONSULTA = "GSAV.SP_BUSCARINTENCIONCONSULTA";
 
         public static string GSAV_SP_CREARCHATLOG = "GSAV.SP_CREARCHATLOG";
+        public static string GSAV_SP_ACTIVIDADESCURSOALUMNO = "GSAV.SP_ACTIVIDADESCURSOALUMNO";
+        public static string GSAV_SP_DOCENTECURSO = "GSAV.SP_DOCENTECURSO";
     }
 }

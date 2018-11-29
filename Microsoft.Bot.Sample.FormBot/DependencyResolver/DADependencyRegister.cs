@@ -24,6 +24,7 @@ namespace FormBot.DependencyResolver
 
             container.RegisterSingleton<IChatLog, ChatLogManager>();
             container.RegisterSingleton<ICurso, CursoManager>();
+            container.RegisterSingleton<IActividad, ActividadManager>();
 
             if (database.Equals("ORACLE"))
             {

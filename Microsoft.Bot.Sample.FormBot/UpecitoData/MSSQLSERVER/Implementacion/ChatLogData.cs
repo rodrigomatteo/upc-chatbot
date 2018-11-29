@@ -67,6 +67,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogError(ex);
             }
 
             return output;
