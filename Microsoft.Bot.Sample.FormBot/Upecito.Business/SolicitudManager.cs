@@ -1,4 +1,5 @@
 ﻿using SimpleInjector;
+using System;
 using Upecito.Data.Interface;
 using Upecito.Interface;
 using Upecito.Model;
@@ -26,10 +27,10 @@ namespace Upecito.Business
             return solicitudData.Leer(idSesion);
         }
 
-        public Solicitud Actualizar(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso, int? idActividad, int? idEmpleado, int? cumpleSLA)
+        public Solicitud Actualizar(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso, int? idActividad, int? idEmpleado, int? cumpleSLA, DateTime? fechaSolucion)
         {
             var solicitudData = container.GetInstance<ISolicitudData>();
-            return solicitudData.Atender(idSolicitud, idIntencion, solucion, estado, usuario, idCurso, idActividad, idEmpleado, cumpleSLA);
+            return solicitudData.Atender(idSolicitud, idIntencion, solucion, estado, usuario, idCurso, idActividad, idEmpleado, cumpleSLA, fechaSolucion);
         }
     }
 }

@@ -239,11 +239,14 @@ namespace Upecito.Bot.Upecito.Helpers
 
                                         ActivitiesByCourseViewModel a = new ActivitiesByCourseViewModel();
 
+                                        if (filtered.Count() == 0)
+                                        {
+                                            context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterFailedAcademicIntent);
+                                        }
+
                                         if (numberSelected > 0)
                                         {
                                             a = filtered.Where(o => o.NumeroActividad == numberSelected).FirstOrDefault();
-
-                                            context.UserData.SetValue("Actividad", a);
 
                                             fechaActividad = a?.FechaActividad.ToString("dd MMMM yyyy");
                                         }
@@ -251,12 +254,16 @@ namespace Upecito.Bot.Upecito.Helpers
                                         {
                                             a = filtered.Where(o => o.FechaActividad >= DateTime.Now).FirstOrDefault();
 
-                                            context.UserData.SetValue("Actividad", a);
-
                                             fechaActividad = a?.FechaActividad.ToString("dd MMMM yyyy");
                                         }
 
-                                        
+                                        if (a == null)
+                                        {
+                                            a = new ActivitiesByCourseViewModel();
+                                        }
+
+                                        context.UserData.SetValue("Actividad", a);
+
 
                                         if (!string.IsNullOrEmpty(fechaActividad))
                                         {
@@ -274,7 +281,7 @@ namespace Upecito.Bot.Upecito.Helpers
                                         else
                                         {
                                             //context.Wait(MenuDialog.ResumeAfterFailedAcademicIntent);
-                                            context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterFailedAcademicIntent);
+                                            context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterDerivedAcademicIntent);
 
                                             //await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
 
@@ -439,7 +446,7 @@ namespace Upecito.Bot.Upecito.Helpers
                          * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
                          * [GSAV_RN004-Comsultas Académicas No Resueltas]
                          */
-                        context.Call(new SinScoreDialog(), MenuDialog.ResumeAfterUnknownAcademicIntent);
+                        context.Call(new SinScoreDialog(), MenuDialog.ResumeAfterDerivedAcademicIntent);
                     }
                 }
                 else
@@ -547,29 +554,46 @@ namespace Upecito.Bot.Upecito.Helpers
                     }
                 }
 
-                solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName, docenteCurso?.IdCurso, idActividad, idEmpleado, cumpleSLA);
 
                 bool IsEmailSent = false;
 
-                if (estado != "A")
+                DateTime? fechaSolucion = null;
+
+                switch (estado)
                 {
-                    if (!string.IsNullOrEmpty(docenteCurso?.Email))
-                    {
+                    case "A":
+                        fechaSolucion = ConvertidorUtil.GmtToPacific(DateTime.Now);
+                        break;
 
-                        IsEmailSent = await SmtpEmailSender.SendEmailAsync("upc.chatbot@gmail.com",
-                            docenteCurso.Email,
-                            "UPECITO - Consultas Académicas No Resueltas",
-                            EmailTeacher(sesion.CodigoAlumno, sesion.NombreApePaterno, solicitud.Consulta));
-                    }
+                    case "D":
 
-                    if (IsEmailSent)
-                    {
-                        await context.PostAsync($"Su consulta ha sido derivada al Docente: {docenteCurso.Nombre} {docenteCurso.ApellidoPat}; quien le brindará una respuesta");
-                    }
+                        solucion = string.Empty;
+                        cumpleSLA = 0;
 
+                        if (!string.IsNullOrEmpty(docenteCurso?.Email))
+                        {
+
+                            IsEmailSent = await SmtpEmailSender.SendEmailAsync("upc.chatbot@gmail.com",
+                                docenteCurso.Email,
+                                "UPECITO - Consultas Académicas No Resueltas",
+                                EmailTeacher(sesion.CodigoAlumno, sesion.NombreApePaterno, solicitud.Consulta));
+                        }
+
+                        if (IsEmailSent)
+                        {
+                            await context.PostAsync($"Su consulta ha sido derivada al Docente: {docenteCurso.Nombre} {docenteCurso.ApellidoPat}; quien le brindará una respuesta");
+                        }
+
+                        break;
+
+                    default:
+                        solucion = string.Empty;
+                        cumpleSLA = 0;
+
+                        break;
                 }
 
-
+                solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName, docenteCurso?.IdCurso, idActividad, idEmpleado, cumpleSLA, fechaSolucion);
 
             }
         }

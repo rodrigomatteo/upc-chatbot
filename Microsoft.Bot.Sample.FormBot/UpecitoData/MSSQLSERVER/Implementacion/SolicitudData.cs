@@ -11,7 +11,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 {
     public class SolicitudData : BaseData, ISolicitudData
     {
-        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso, int? idActividad, int? idEmpleado, int? cumpleSLA)
+        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso, int? idActividad, int? idEmpleado, int? cumpleSLA, DateTime? fechaSolucion)
         {
             var solicitud = new Solicitud();
             try
@@ -33,6 +33,17 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pIdCurso", idCurso);
                     cmd.Parameters.AddWithValue("@pUsuario", usuario);
                     cmd.Parameters.AddWithValue("@pFechaActualiza", ConvertidorUtil.GmtToPacific(DateTime.Now));
+
+                    if (estado == "D")
+                    {
+                        cmd.Parameters.AddWithValue("@pFechaDerivacion", ConvertidorUtil.GmtToPacific(DateTime.Now));
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@pFechaDerivacion", null);
+                    }
+
+                    cmd.Parameters.AddWithValue("@pFechaSolucion", fechaSolucion);
                     cmd.Parameters.AddWithValue("@pIdActividad", idActividad);
                     cmd.Parameters.AddWithValue("@pIdEmpleado", idEmpleado);
                     cmd.Parameters.AddWithValue("@pCumpleSla", cumpleSLA);

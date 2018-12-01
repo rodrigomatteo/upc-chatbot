@@ -63,7 +63,7 @@ namespace Upecito.Data.Oracle.Implementacion
             return solicitud_;
         }
 
-        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso, int? idActividad, int? idEmpleado, int? cumpleSLA)
+        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso, int? idActividad, int? idEmpleado, int? cumpleSLA, DateTime? fechaSolucion)
         {
             var solicitud = new Solicitud();
             try

@@ -103,7 +103,7 @@ namespace FormBot.Dialogs
             {
                 Console.WriteLine(err.Message);
 
-                await Helpers.ActualizarSolicitud(context, AppConstant.EstadoSolicitud.CANCELADA);
+                await Helpers.ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
 
             }
             catch (Exception ex)
@@ -162,6 +162,13 @@ namespace FormBot.Dialogs
             // 4.1.14  El caso de uso finaliza
             //await Task.Delay(2000);
             //ShowPrompt(context);
+
+            context.Done(true);
+        }
+
+        public static async Task ResumeAfterDerivedAcademicIntent(IDialogContext context, IAwaitable<object> result)
+        {
+            await Helpers.ActualizarSolicitud(context, AppConstant.EstadoSolicitud.DERIVADA);
 
             context.Done(true);
         }
