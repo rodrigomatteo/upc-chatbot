@@ -5,6 +5,7 @@
         public static string GSAV_SP_CREARSESION = "GSAV.SP_CREARSESION";
         public static string GSAV_SP_CERRARSESION = "GSAV.SP_CERRARSESION";
         public static string GSAV_SP_CREARSOLICITUD = "GSAV.SP_CREARSOLICITUD";
+        public static string GSAV_SP_LEERSOLICITUD = "GSAV.SP_LEERSOLICITUD";
         public static string GSAV_SP_ACTUALIZARSOLICITUD = "GSAV.SP_ACTUALIZARSOLICITUD";
         public static string GSAV_SP_BUSCARINTENCIONCONSULTA = "GSAV.SP_BUSCARINTENCIONCONSULTA";
 

@@ -5,6 +5,6 @@ namespace Upecito.Data.Interface
 {
     public interface ICursoData
     {
-        List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno, string curso);
+        List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno);
     }
 }

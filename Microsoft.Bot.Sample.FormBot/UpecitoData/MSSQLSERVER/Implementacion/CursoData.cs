@@ -11,7 +11,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 {
     public class CursoData : BaseData, ICursoData
     {
-        public List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno, string curso)
+        public List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno)
         {
             List<CourseByModuleViewModel> output = new List<CourseByModuleViewModel>();
 
@@ -28,7 +28,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     };
 
                     cmd.Parameters.AddWithValue("@pIdAlumno", idAlumno);
-                    cmd.Parameters.AddWithValue("@pCurso", curso);
+                    //cmd.Parameters.AddWithValue("@pCurso", curso);
 
                     //string cmdText = "SELECT A.CODIGOALUMNO, C.CODIGO, C.NOMBRE, C.ACTIVO FROM GSAV.CURSO C " +
 		                  //   "INNER JOIN GSAV.SECCION S ON C.IDCURSO = S.IDCURSO " +
@@ -53,7 +53,10 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                                 IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
                                 Activo = rd.GetBoolean(rd.GetOrdinal("ACTIVO")),
                                 Seccion = rd.GetString(rd.GetOrdinal("SECCION")),
-                                Email = rd.GetString(rd.GetOrdinal("EMAIL"))
+                                Email = rd.GetString(rd.GetOrdinal("EMAIL")),
+                                Nombre = rd.GetString(rd.GetOrdinal("NOMBRE")),
+                                ApellidoPat = rd.GetString(rd.GetOrdinal("APELLIDOPAT")),
+                                ApellidoMat = rd.GetString(rd.GetOrdinal("APELLIDOMAT"))
                             });
                         }
                     }

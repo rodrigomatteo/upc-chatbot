@@ -18,17 +18,29 @@ namespace FormBot.Dialogs
 
         public Task StartAsync(IDialogContext context)
         {
-            var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
-            var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
+            var messageActivity = context.Activity.AsMessageActivity();
+            var eventActivity = context.Activity.AsEventActivity();
 
-            PromptDialog.Choice(
-               context: context,
-               resume: OnOptionSelected,
-               options: options,
-               descriptions: descriptions,
-               prompt: "Selecciona el canal de atención en el que requieres ayuda",
-               retry: "Por favor intenta de nuevo"
-           );
+            if (eventActivity?.Name == "requestRootDialog" || messageActivity?.Text.ToUpper() == "INICIAR")
+            {
+                var options = new[] { Selection.Consultas_Academicas, Selection.Consultas_Tecnicas };
+                var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
+
+                PromptDialog.Choice(
+                   context: context,
+                   resume: OnOptionSelected,
+                   options: options,
+                   descriptions: descriptions,
+                   prompt: "Selecciona el canal de atención en el que requieres ayuda",
+                   retry: "Por favor intenta de nuevo"
+               );
+            }
+            else
+            {
+                ResumeGetAcademicIntent(context, new AwaitableFromItem<string>("")).Wait();
+            }
+
+
 
             return Task.CompletedTask;
         }
@@ -51,6 +63,60 @@ namespace FormBot.Dialogs
             }
 
         }
+
+        public static async Task OnCourseSelected(IDialogContext context, IAwaitable<string> result)
+        {
+            try
+            {
+                var optionSelected = await result;
+
+                //var actividad = context.UserData.GetValue<string>("Tarea");
+
+
+                //var container = new Container();
+                //UnityConfig.RegisterTypes(container);
+
+                //var cursoManager = container.GetInstance<ICurso>();
+
+                //Solicitud solicitud = context.UserData.GetValue<Solicitud>("solicitud");
+
+                //List<CourseByModuleViewModel> studentActiveCourses = cursoManager.GetCourseByModuleActive(solicitud.IdAlumno);
+
+                //var options = studentActiveCourses.Select(x => x.Curso).ToArray();
+
+                //if (options.Any(x => x == optionSelected))
+                //{
+                //    await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
+                //}
+                //else
+                //{
+                //    await context.PostAsync(invalidCourseInput);
+                //}
+
+                context.UserData.SetValue("PromptCourse", false);
+
+                await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
+
+                //context.Wait(MessageReceivedAsync);
+            }
+            catch (TooManyAttemptsException err)
+            {
+                Console.WriteLine(err.Message);
+
+                await Helpers.ActualizarSolicitud(context, AppConstant.EstadoSolicitud.CANCELADA);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+
+            context.Wait(MessageReceivedAsync);
+
+        }
+
+
 
         //public static async Task ResumeGetAcademicIntent(IDialogContext context, IAwaitable<IMessageActivity> result)
         //{
@@ -83,8 +149,10 @@ namespace FormBot.Dialogs
             await Helpers.ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
 
             // 4.1.14  El caso de uso finaliza
-            await Task.Delay(2000);
+            //await Task.Delay(2000);
             //ShowPrompt(context);
+
+            context.Done(true);
         }
 
         public static async Task ResumeAfterFailedAcademicIntent(IDialogContext context, IAwaitable<object> result)

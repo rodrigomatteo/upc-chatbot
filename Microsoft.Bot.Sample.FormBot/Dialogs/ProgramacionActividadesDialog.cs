@@ -1,22 +1,50 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
+﻿using FormBot.DependencyResolver;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using SimpleInjector;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Upecito.Interface;
 using Upecito.Model;
+using Upecito.Model.ViewModel;
 
 namespace FormBot.Dialogs
 {
-    public class ProgramacionActividadesDialog : BaseDialog
-    {
-        private const string respuesta = "Esta es una pregunta relacionada a Programación Académica";
+   // [Serializable]
+    //public class ProgramacionActividadesDialog : IDialog<object>
+   // {
+        //public Task StartAsync(IDialogContext context)
+        //{
+        //    var curso = context.UserData.GetValue<string>("Curso");
 
-        protected override void MostrarRespuesta(IDialogContext context, Result resultado)
-        {
-            var userName = context.UserData.GetValue<Sesion>("sesion").NombreApePaterno;
+        //    if (string.IsNullOrEmpty(curso))
+        //    {
+        //        var container = new Container();
+        //        UnityConfig.RegisterTypes(container);
 
-            resultado.Speech = $"{userName} {respuesta} {resultado.Speech}";
-            base.MostrarRespuesta(context, resultado);
-        }
-    }
+        //        var cursoManager = container.GetInstance<ICurso>();
+
+        //        Solicitud solicitud = context.UserData.GetValue<Solicitud>("solicitud");
+
+        //        List<CourseByModuleViewModel> studentActiveCourses = cursoManager.GetCourseByModuleActive(solicitud.IdAlumno);
+
+        //        var options = studentActiveCourses.Select(x => x.Curso).ToArray();
+
+        //        PromptDialog.Choice(
+        //           context: context,
+        //           resume: OnCourseSelected,
+        //           options: options,
+        //           descriptions: options,
+        //           prompt: "Por favor seleccione el curso"
+        //       );
+        //    }
+
+        //    return Task.CompletedTask;
+        //}
+
+
+
+    //}
 }

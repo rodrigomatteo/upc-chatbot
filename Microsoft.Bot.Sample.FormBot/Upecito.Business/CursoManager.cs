@@ -15,10 +15,10 @@ namespace Upecito.Business
             this.container = container;
         }
 
-        public List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno, string curso)
+        public List<CourseByModuleViewModel> GetCourseByModuleActive(int idAlumno)
         {
             var cursoData = container.GetInstance<ICursoData>();
-            return cursoData.GetCourseByModuleActive(idAlumno, curso);
+            return cursoData.GetCourseByModuleActive(idAlumno);
         }
     }
 }

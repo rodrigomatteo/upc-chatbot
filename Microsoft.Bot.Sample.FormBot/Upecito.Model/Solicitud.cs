@@ -13,5 +13,6 @@ namespace Upecito.Model
         public DateTime FechaRegistro { get; set; }
         public string LogUsuario { get; set; }
         public DateTime LogFecha { get; set; }
+        public string Estado { get; set; }
     }
 }

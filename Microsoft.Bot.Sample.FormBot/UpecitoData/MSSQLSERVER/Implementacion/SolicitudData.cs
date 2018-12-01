@@ -49,7 +49,8 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                                 IdSesion = rd.GetInt32(rd.GetOrdinal("IDSESION")),
                                 LogUsuario = rd.GetString(rd.GetOrdinal("LOGUSUARIO")),
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
-                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
+                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO")),
+                                Estado = rd.GetString(rd.GetOrdinal("ESTADO"))
                             };
                         }
                     }
@@ -105,7 +106,8 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                                 IdSesion = rd.GetInt32(rd.GetOrdinal("IDSESION")),
                                 LogUsuario = rd.GetString(rd.GetOrdinal("LOGUSUARIO")),
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
-                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO"))
+                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO")),
+                                Estado = rd.GetString(rd.GetOrdinal("ESTADO"))
                             };
                         }
                     }
@@ -121,5 +123,57 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 
             return solicitud;
         }
+
+        public Solicitud Leer(long idSesion)
+        {
+            var solicitud = new Solicitud();
+
+            try
+            {
+                using (var cnn = MSSQLSERVERCnx.MSSqlCnx())
+                {
+                    SqlCommand cmd = null;
+                    cnn.Open();
+
+                    cmd = new SqlCommand(SP.GSAV_SP_LEERSOLICITUD, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    cmd.Parameters.AddWithValue("@pIdSesion", idSesion);
+
+                    SqlDataReader rd = cmd.ExecuteReader();
+
+                    if (rd.HasRows)
+                    {
+                        while (rd.Read())
+                        {
+                            solicitud = new Solicitud
+                            {
+                                IdSolicitud = rd.GetInt32(rd.GetOrdinal("IDSOLICITUD")),
+                                IdCanalAtencion = rd.GetInt32(rd.GetOrdinal("IDCANALATENCION")),
+                                IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO")),
+                                IdCurso = rd.GetInt32(rd.GetOrdinal("IDCURSO")),
+                                IdSesion = rd.GetInt32(rd.GetOrdinal("IDSESION")),
+                                LogUsuario = rd.GetString(rd.GetOrdinal("LOGUSUARIO")),
+                                Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
+                                FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO")),
+                                Estado = rd.GetString(rd.GetOrdinal("ESTADO"))
+                            };
+                        }
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                //throw ex;
+            }
+
+            return solicitud;
+        }
+
     }
 }

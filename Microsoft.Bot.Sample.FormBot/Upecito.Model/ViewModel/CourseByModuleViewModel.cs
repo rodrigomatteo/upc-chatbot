@@ -9,5 +9,9 @@
         public bool Activo { get; set; }
         public string Seccion { get; set; }
         public string Email { get; set; }
+        public string Nombre { get; set; }
+        public string ApellidoPat { get; set; }
+        public string ApellidoMat { get; set; }
+
     }
 }

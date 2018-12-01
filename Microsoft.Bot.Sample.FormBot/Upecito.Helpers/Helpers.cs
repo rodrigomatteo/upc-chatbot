@@ -19,6 +19,7 @@ using Upecito.Model.ViewModel;
 using System.Linq;
 using Upecito.Data.Implementation;
 using System.Web;
+using System.Threading;
 
 namespace Upecito.Bot.Upecito.Helpers
 {
@@ -130,13 +131,29 @@ namespace Upecito.Bot.Upecito.Helpers
             var activity = context.Activity as Activity;
 
             Sesion sesion = context.UserData.GetValue<Sesion>("sesion");
+            context.UserData.SetValue("Usuario", sesion.Nombre);
 
             var container = new Container();
             UnityConfig.RegisterTypes(container);
 
             /* 4.1.4   El Sistema crea una nueva Solicitud Académica con los datos indicados líneas abajo
                 en la entidad[GSAV_SolicitudAcadémica], generando un código único */
-            Solicitud solicitud = CrearNuevaSolicitud(sesion, context, activity, container);
+
+            Solicitud solicitud = new Solicitud();
+
+            if (context.UserData.ContainsKey("solicitud"))
+            {
+                solicitud = LeerSolicitud(sesion, context, activity, container);
+
+                if (solicitud.Estado != "P")
+                {
+                    solicitud = CrearNuevaSolicitud(sesion, context, activity, container);
+                }
+            }
+            else
+            {
+                solicitud = CrearNuevaSolicitud(sesion, context, activity, container);
+            }
 
             try
             {
@@ -177,19 +194,27 @@ namespace Upecito.Bot.Upecito.Helpers
                             Dictionary<string, string> listParams = JsonConvert.DeserializeObject<Dictionary<string, string>>(dfParams);
                             string course = string.Empty;
                             string assignment = string.Empty;
+                            int number = 0;
 
                             if (listParams.Count > 0)
                             {
                                 if (listParams.ContainsKey("Curso"))
                                 {
                                     course = listParams["Curso"];
+                                    context.UserData.SetValue("Curso", course);
                                 }
 
                                 if (listParams.ContainsKey("Tarea"))
                                 {
                                     assignment = listParams["Tarea"];
+                                    context.UserData.SetValue("Tarea", assignment);
                                 }
 
+                                if (listParams.ContainsKey("number"))
+                                {
+                                    int.TryParse(listParams["number"], out number);
+                                    context.UserData.SetValue("Number", number);
+                                }
                             }
 
                             switch (intent)
@@ -199,51 +224,129 @@ namespace Upecito.Bot.Upecito.Helpers
                                  * el sistema extiende el caso de uso: GSAV_CUS005_Consultar Programación de Actividades
                                 */
                                 case AppConstant.Intencion.PROGRAMACION:
-                                    //context.Call(new ProgramacionActividadesDialog(), MenuDialog.ResumeAfterSuccessAcademicIntent);
-                                    if (!string.IsNullOrEmpty(course))
-                                    {
-                                        context.UserData.SetValue("Curso", course);
-                                    }
-
-                                    if (!string.IsNullOrEmpty(assignment))
-                                    {
-                                        context.UserData.SetValue("Tarea", assignment);
-                                    }
-
 
                                     if (receivedResult.Intents[0].AllRequiredParamsPresent)
                                     {
                                         string fechaActividad = string.Empty;
+                                        int numberSelected = context.UserData.GetValue<int>("Number");
 
                                         var actividadManager = container.GetInstance<IActividad>();
 
                                         List<ActivitiesByCourseViewModel> activities = actividadManager.GetActivitiesByCourse(solicitud.IdAlumno);
 
-                                        fechaActividad = activities.Where(o => o.Curso == course && o.Actividad == assignment).FirstOrDefault()?.FechaActividad.ToString("dd MMMM yyyy");
+                                        var filtered = activities.Where(o => o.Curso == course && o.Actividad == assignment);
+
+                                        if (numberSelected > 0)
+                                        {
+                                            fechaActividad = filtered.Where(o => o.NumeroActividad == numberSelected)
+                                                .FirstOrDefault()?
+                                                .FechaActividad.ToString("dd MMMM yyyy");
+                                        }
+                                        else
+                                        {
+                                            fechaActividad = filtered.Where(o => o.FechaActividad >= DateTime.Now)
+                                            .FirstOrDefault()?
+                                            .FechaActividad.ToString("dd MMMM yyyy");
+                                        }
+
+                                        
 
                                         if (!string.IsNullOrEmpty(fechaActividad))
                                         {
                                             context.UserData.SetValue("FechaActividad", fechaActividad);
 
-                                            await context.PostAsync(receivedResult.Speech + fechaActividad);
-                                            context.Wait(MenuDialog.ResumeAfterSuccessAcademicIntent);
+                                            receivedResult.Speech = receivedResult.Speech + " " + fechaActividad;
 
+                                            context.UserData.SetValue("result", receivedResult);
+
+                                            await context.PostAsync(receivedResult.Speech);
+
+                                            //await context.Forward(new MenuDialog(), MenuDialog.ResumeAfterSuccessAcademicIntent, context, CancellationToken.None);
+                                            //context.Wait(MenuDialog.ResumeAfterSuccessAcademicIntent);
+                                            context.Call(new MenuDialog(), MenuDialog.ResumeAfterSuccessAcademicIntent);
                                         }
                                         else
                                         {
                                             //context.Wait(MenuDialog.ResumeAfterFailedAcademicIntent);
-                                            //context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterFailedAcademicIntent);
+                                            context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterFailedAcademicIntent);
 
-                                            await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
+                                            //await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
 
-                                            await context.PostAsync("Se ha enviado su consulta al docente");
-                                            context.Wait(MenuDialog.MessageReceivedAsync);
+                                            //context.Wait(MenuDialog.MessageReceivedAsync);
+
+                                            //context.Call(new ProgramacionActividadesDialog(), MenuDialog.ResumeAfterSuccessAcademicIntent);
+
                                         }
 
                                     }
                                     else
                                     {
-                                        await context.PostAsync(receivedResult.Speech);
+                                        if (string.IsNullOrEmpty(course))
+                                        {
+
+                                               var cursoManager = container.GetInstance<ICurso>();
+
+                                                List<CourseByModuleViewModel> studentActiveCourses = cursoManager.GetCourseByModuleActive(solicitud.IdAlumno);
+
+                                                var questions = studentActiveCourses.Select(x => x.Curso).ToList(); ;
+
+                                                string QuestionPrompt = "Por favor seleccione el curso?";
+                                                string invalidCourseInput = "La información ingresada es invalida, ingrese nuevamente su consulta";
+
+                                                PromptOptions<string> options = new PromptOptions<string>(QuestionPrompt, "", invalidCourseInput, questions, 0); // Overrided the PromptOptions Constructor.
+                                                PromptDialog.Choice(context, MenuDialog.OnCourseSelected, options);
+
+                                        }
+                                        else
+                                        {
+                                            await context.PostAsync(receivedResult.Speech);
+                                        }
+
+                                        //await context.PostAsync(receivedResult.Speech);
+                                        context.Wait(MenuDialog.MessageReceivedAsync);
+                                    }
+
+                                    break;
+
+                                case "CreditosWS":
+                                    if (receivedResult.Intents[0].AllRequiredParamsPresent)
+                                    {
+                                        var actividadManager = container.GetInstance<IActividad>();
+
+                                        List<ActivitiesByCourseViewModel> activities = actividadManager.GetActivitiesByCourse(solicitud.IdAlumno);
+
+                                        var filtered = activities.Where(o => o.Curso == course);
+
+                                     
+                                            await context.PostAsync(receivedResult.Speech + " " + 0);
+                                        //context.Wait(MenuDialog.ResumeAfterSuccessAcademicIntent);
+                                        context.Call(new MenuDialog(), MenuDialog.ResumeAfterSuccessAcademicIntent);
+
+                                    }
+                                    else
+                                    {
+                                        if (string.IsNullOrEmpty(course))
+                                        {
+
+                                            var cursoManager = container.GetInstance<ICurso>();
+
+                                            List<CourseByModuleViewModel> studentActiveCourses = cursoManager.GetCourseByModuleActive(solicitud.IdAlumno);
+
+                                            var questions = studentActiveCourses.Select(x => x.Curso).ToList(); ;
+
+                                            string QuestionPrompt = "Por favor seleccione el curso?";
+                                            string invalidCourseInput = "La información ingresada es invalida, ingrese nuevamente su consulta";
+
+                                            PromptOptions<string> options = new PromptOptions<string>(QuestionPrompt, "", invalidCourseInput, questions, 0); // Overrided the PromptOptions Constructor.
+                                            PromptDialog.Choice(context, MenuDialog.OnCourseSelected, options);
+
+                                        }
+                                        else
+                                        {
+                                            await context.PostAsync(receivedResult.Speech);
+                                        }
+
+                                        //await context.PostAsync(receivedResult.Speech);
                                         context.Wait(MenuDialog.MessageReceivedAsync);
                                     }
 
@@ -261,7 +364,8 @@ namespace Upecito.Bot.Upecito.Helpers
                                     await context.PostAsync(message);
                                     //context.Wait(MenuDialog.MessageReceivedAsync);
                                     //context.Call(new MenuDialog(), ResumeAfterSuccessAcademicIntent);
-                                    context.Wait(MenuDialog.ResumeAfterSuccessAcademicIntent);
+                                    //context.Wait(MenuDialog.ResumeAfterSuccessAcademicIntent);
+                                    context.Call(new MenuDialog(), MenuDialog.ResumeAfterSuccessAcademicIntent);
                                     break;
 
                                 //case AppConstant.Intencion.ORGANIZACION:
@@ -286,6 +390,8 @@ namespace Upecito.Bot.Upecito.Helpers
                                 //    context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
                                 //    break;
                                 case AppConstant.Intencion.DEFAULT:
+                                    await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.FALTAINFORMACION);
+
                                     context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterFailedAcademicIntent);
                                     break;
 
@@ -378,6 +484,19 @@ namespace Upecito.Bot.Upecito.Helpers
             return solicitud;
         }
 
+        private static Solicitud LeerSolicitud(Sesion sesion, IDialogContext context, Activity activity, Container container)
+        {
+            var idSesion = sesion.IdSesion;
+
+
+            var solicitudManager = container.GetInstance<ISolicitud>();
+            Solicitud solicitud = solicitudManager.LeerSolicitud(idSesion);
+
+            context.UserData.SetValue("solicitud", solicitud);
+
+            return solicitud;
+        }
+
         public static async Task ActualizarSolicitud(IDialogContext context, string estado)
         {
             var container = new Container();
@@ -412,7 +531,9 @@ namespace Upecito.Bot.Upecito.Helpers
 
                 var cursoManager = container.GetInstance<ICurso>();
 
-                CourseByModuleViewModel docenteCurso = cursoManager.GetCourseByModuleActive(solicitud.IdAlumno, curso).FirstOrDefault();
+                List<CourseByModuleViewModel> studentActiveCourses = cursoManager.GetCourseByModuleActive(solicitud.IdAlumno);
+
+                CourseByModuleViewModel docenteCurso = studentActiveCourses.Where(s=>s.Curso == curso).FirstOrDefault();
 
                 var respuestaPersonalizada = context.PrivateConversationData.GetValueOrDefault("custom", string.Empty);
                 var solucion = respuestaPersonalizada.Equals(string.Empty) ? receivedResult.Speech : respuestaPersonalizada;
@@ -421,14 +542,24 @@ namespace Upecito.Bot.Upecito.Helpers
 
                 bool IsEmailSent = false;
 
-                if (!string.IsNullOrEmpty(docenteCurso?.Email))
+                if (estado != "A")
                 {
+                    if (!string.IsNullOrEmpty(docenteCurso?.Email))
+                    {
 
-                    IsEmailSent = await SmtpEmailSender.SendEmailAsync("upc.chatbot@gmail.com", 
-                        docenteCurso.Email, 
-                        "UPECITO - Consultas Académicas No Resueltas", 
-                        EmailTeacher(sesion.CodigoAlumno, sesion.NombreApePaterno, solicitud.Consulta));
+                        IsEmailSent = await SmtpEmailSender.SendEmailAsync("upc.chatbot@gmail.com",
+                            docenteCurso.Email,
+                            "UPECITO - Consultas Académicas No Resueltas",
+                            EmailTeacher(sesion.CodigoAlumno, sesion.NombreApePaterno, solicitud.Consulta));
+                    }
+
+                    if (IsEmailSent)
+                    {
+                        await context.PostAsync($"Su consulta ha sido derivada al Docente: {docenteCurso.Nombre} {docenteCurso.ApellidoPat}; quien le brindará una respuesta");
+                    }
+
                 }
+
 
 
             }

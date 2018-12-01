@@ -90,5 +90,10 @@ namespace Upecito.Data.Oracle.Implementacion
 
             return solicitud;
         }
+
+        public Solicitud Leer(long idSesion)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\Microsoft.Bot.Sample.FormBot",
-    "\\Microsoft.Bot.Sample.FormBot\\Models"
+    "\\Microsoft.Bot.Sample.FormBot\\Dialogs",
+    "\\Microsoft.Bot.Sample.FormBot\\Models",
+    "\\Microsoft.Bot.Sample.FormBot\\Upecito.Helpers"
   ],
-  "SelectedNode": "\\Microsoft.Bot.Sample.FormBot\\Web.config",
+  "SelectedNode": "\\Microsoft.Bot.Sample.FormBot\\Upecito.Helpers\\Helpers.cs",
   "PreviewInSolutionExplorer": false
 }
