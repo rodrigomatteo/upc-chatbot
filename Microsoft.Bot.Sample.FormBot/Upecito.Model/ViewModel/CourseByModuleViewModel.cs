@@ -12,6 +12,7 @@
         public string Nombre { get; set; }
         public string ApellidoPat { get; set; }
         public string ApellidoMat { get; set; }
+        public int? IdEmpleado { get; set; }
 
     }
 }

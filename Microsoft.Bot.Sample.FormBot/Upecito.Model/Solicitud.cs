@@ -14,5 +14,8 @@ namespace Upecito.Model
         public string LogUsuario { get; set; }
         public DateTime LogFecha { get; set; }
         public string Estado { get; set; }
+        public int? IdActividad { get; set; }
+        public int? CumpleSLA { get; set; }
+        public int? IdEmpleado { get; set; }
     }
 }

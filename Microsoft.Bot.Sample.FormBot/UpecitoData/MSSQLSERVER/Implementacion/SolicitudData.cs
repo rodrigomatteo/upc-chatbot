@@ -11,7 +11,7 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
 {
     public class SolicitudData : BaseData, ISolicitudData
     {
-        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso)
+        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario, int? idCurso, int? idActividad, int? idEmpleado, int? cumpleSLA)
         {
             var solicitud = new Solicitud();
             try
@@ -33,6 +33,9 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pIdCurso", idCurso);
                     cmd.Parameters.AddWithValue("@pUsuario", usuario);
                     cmd.Parameters.AddWithValue("@pFechaActualiza", ConvertidorUtil.GmtToPacific(DateTime.Now));
+                    cmd.Parameters.AddWithValue("@pIdActividad", idActividad);
+                    cmd.Parameters.AddWithValue("@pIdEmpleado", idEmpleado);
+                    cmd.Parameters.AddWithValue("@pCumpleSla", cumpleSLA);
 
                     SqlDataReader rd = cmd.ExecuteReader();
 
@@ -51,6 +54,9 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
                                 FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO")),
                                 Estado = rd.GetString(rd.GetOrdinal("ESTADO"))
+                                //IdActividad = rd.GetInt32(rd.GetOrdinal("IDACTIVIDAD")),
+                                //IdEmpleado = rd.GetInt32(rd.GetOrdinal("IDEMPLEADO")),
+                                //CumpleSLA = rd.GetInt32(rd.GetOrdinal("CUMPLESLA"))
                             };
                         }
                     }
@@ -90,6 +96,8 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                     cmd.Parameters.AddWithValue("@pConsulta", consulta);
                     cmd.Parameters.AddWithValue("@pUsuario", usuario);
                     cmd.Parameters.AddWithValue("@pFechaCreacion", ConvertidorUtil.GmtToPacific(DateTime.Now));
+                    //cmd.Parameters.AddWithValue("@pIdActividad", null);
+                    //cmd.Parameters.AddWithValue("@pIdEmpleado", null);
 
                     SqlDataReader rd = cmd.ExecuteReader();
 
@@ -108,6 +116,9 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
                                 FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO")),
                                 Estado = rd.GetString(rd.GetOrdinal("ESTADO"))
+                                //IdActividad = null,
+                                //IdEmpleado = null,
+                                //CumpleSLA = 0
                             };
                         }
                     }
@@ -159,6 +170,9 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                                 Consulta = rd.GetValue(rd.GetOrdinal("CONSULTA")) == DBNull.Value ? string.Empty : rd.GetString(rd.GetOrdinal("CONSULTA")),
                                 FechaRegistro = rd.GetDateTime(rd.GetOrdinal("FECHAREGISTRO")),
                                 Estado = rd.GetString(rd.GetOrdinal("ESTADO"))
+                                //IdActividad = rd.GetInt32(rd.GetOrdinal("IDACTIVIDAD")),
+                                //IdEmpleado = rd.GetInt32(rd.GetOrdinal("IDEMPLEADO")),
+                                //CumpleSLA = rd.GetInt32(rd.GetOrdinal("CUMPLESLA"))
                             };
                         }
                     }

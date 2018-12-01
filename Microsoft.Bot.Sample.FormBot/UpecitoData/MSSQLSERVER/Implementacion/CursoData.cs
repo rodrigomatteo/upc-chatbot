@@ -56,7 +56,8 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                                 Email = rd.GetString(rd.GetOrdinal("EMAIL")),
                                 Nombre = rd.GetString(rd.GetOrdinal("NOMBRE")),
                                 ApellidoPat = rd.GetString(rd.GetOrdinal("APELLIDOPAT")),
-                                ApellidoMat = rd.GetString(rd.GetOrdinal("APELLIDOMAT"))
+                                ApellidoMat = rd.GetString(rd.GetOrdinal("APELLIDOMAT")),
+                                IdEmpleado = rd.GetInt32(rd.GetOrdinal("IDEMPLEADO"))
                             });
                         }
                     }

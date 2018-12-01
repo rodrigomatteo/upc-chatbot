@@ -20,6 +20,7 @@ using System.Linq;
 using Upecito.Data.Implementation;
 using System.Web;
 using System.Threading;
+using FormBot.Util;
 
 namespace Upecito.Bot.Upecito.Helpers
 {
@@ -236,24 +237,29 @@ namespace Upecito.Bot.Upecito.Helpers
 
                                         var filtered = activities.Where(o => o.Curso == course && o.Actividad == assignment);
 
+                                        ActivitiesByCourseViewModel a = new ActivitiesByCourseViewModel();
+
                                         if (numberSelected > 0)
                                         {
-                                            fechaActividad = filtered.Where(o => o.NumeroActividad == numberSelected)
-                                                .FirstOrDefault()?
-                                                .FechaActividad.ToString("dd MMMM yyyy");
+                                            a = filtered.Where(o => o.NumeroActividad == numberSelected).FirstOrDefault();
+
+                                            context.UserData.SetValue("Actividad", a);
+
+                                            fechaActividad = a?.FechaActividad.ToString("dd MMMM yyyy");
                                         }
                                         else
                                         {
-                                            fechaActividad = filtered.Where(o => o.FechaActividad >= DateTime.Now)
-                                            .FirstOrDefault()?
-                                            .FechaActividad.ToString("dd MMMM yyyy");
+                                            a = filtered.Where(o => o.FechaActividad >= DateTime.Now).FirstOrDefault();
+
+                                            context.UserData.SetValue("Actividad", a);
+
+                                            fechaActividad = a?.FechaActividad.ToString("dd MMMM yyyy");
                                         }
 
                                         
 
                                         if (!string.IsNullOrEmpty(fechaActividad))
                                         {
-                                            context.UserData.SetValue("FechaActividad", fechaActividad);
 
                                             receivedResult.Speech = receivedResult.Speech + " " + fechaActividad;
 
@@ -395,28 +401,7 @@ namespace Upecito.Bot.Upecito.Helpers
                                     context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterFailedAcademicIntent);
                                     break;
 
-                                case "Notas":
-
-                                    if (!string.IsNullOrEmpty(course))
-                                    {
-                                        context.UserData.SetValue("course", course);
-                                    }
-
-                                    if (!string.IsNullOrEmpty(assignment))
-                                    {
-                                        context.UserData.SetValue("assignment", assignment);
-                                    }
-
-
-                                    if (receivedResult.Intents[0].AllRequiredParamsPresent)
-                                    {
-
-                                    }
-
-
-                                    await context.PostAsync(receivedResult.Speech);
-                                    context.Wait(MenuDialog.MessageReceivedAsync);
-                                    break;
+                               
                                 default:
                                     /*
                                      * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
@@ -481,6 +466,9 @@ namespace Upecito.Bot.Upecito.Helpers
 
             context.UserData.SetValue("solicitud", solicitud);
 
+            context.UserData.SetValue("Curso", string.Empty);
+            context.UserData.SetValue("Tarea", string.Empty);
+
             return solicitud;
         }
 
@@ -521,6 +509,8 @@ namespace Upecito.Bot.Upecito.Helpers
             Intencion intent;
             context.UserData.TryGetValue("intencion", out intent);
 
+            ActivitiesByCourseViewModel actividad;
+            context.UserData.TryGetValue("Actividad", out actividad);
 
             if (solicitud != null && receivedResult != null)
             {
@@ -538,7 +528,26 @@ namespace Upecito.Bot.Upecito.Helpers
                 var respuestaPersonalizada = context.PrivateConversationData.GetValueOrDefault("custom", string.Empty);
                 var solucion = respuestaPersonalizada.Equals(string.Empty) ? receivedResult.Speech : respuestaPersonalizada;
 
-                solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName, docenteCurso?.IdCurso);
+                int? idActividad = actividad?.IdActividad;
+                int? idEmpleado = docenteCurso?.IdEmpleado;
+                int? cumpleSLA = 2;
+                var tipoConsulta = context.UserData.GetValue<string>("tipo-consulta");
+
+                var dif = ConvertidorUtil.GmtToPacific(DateTime.Now).Subtract(solicitud.FechaRegistro).TotalHours;
+
+                if (tipoConsulta == "1" && dif <= 48)
+                {
+                    cumpleSLA = 1;
+                }
+                else
+                {
+                    if (dif <= 24)
+                    {
+                        cumpleSLA = 1;
+                    }
+                }
+
+                solicitudManager.Actualizar(solicitud.IdSolicitud, intentId, solucion, estado, userName, docenteCurso?.IdCurso, idActividad, idEmpleado, cumpleSLA);
 
                 bool IsEmailSent = false;
 
