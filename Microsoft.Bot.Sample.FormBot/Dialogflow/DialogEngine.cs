@@ -141,26 +141,37 @@ namespace FormBot.Dialogflow
 
         private async Task EvaluateDialogFlowResponse(QueryResult response, Result result, Activity message, Sesion sesion)
         {
-            result.SessionId = message.Id;
-            result.Status = (int)HttpStatusCode.OK;
-            result.Speech = response.FulfillmentText;
-
-            result.OutputContexts = response.OutputContexts.ToString();
-
-            Intent entity = new Intent()
+            try
             {
-                IntentId = response.Intent.IntentName.IntentId,
-                IntentName = response.Intent.DisplayName,
-                Score = response.IntentDetectionConfidence,
-                Parameters = response.Parameters.ToString(),
-                AllRequiredParamsPresent = response.AllRequiredParamsPresent
-            };
+                result.SessionId = message.Id;
+                result.Status = (int)HttpStatusCode.OK;
+                result.Speech = response.FulfillmentText;
 
-            result.Intents.Add(entity);
+                result.OutputContexts = response.OutputContexts.ToString();
 
-            //Create chatlog record
-            Helpers.PersistChatLog(response, sesion, response.QueryText, "Usuario", null);
-            Helpers.PersistChatLog(response, sesion, response.FulfillmentText, "Bot", "DialogFlow");
+                if (!string.IsNullOrEmpty(response.Intent.DisplayName))
+                {
+                    Intent entity = new Intent()
+                    {
+                        IntentId = response.Intent.IntentName.IntentId,
+                        IntentName = response.Intent.DisplayName,
+                        Score = response.IntentDetectionConfidence,
+                        Parameters = response.Parameters.ToString(),
+                        AllRequiredParamsPresent = response.AllRequiredParamsPresent
+                    };
+
+                    result.Intents.Add(entity);
+                }
+
+                //Create chatlog record
+                Helpers.PersistChatLog(response, sesion, response.QueryText, "Usuario", null);
+                Helpers.PersistChatLog(response, sesion, response.FulfillmentText, "Bot", "DialogFlow");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+          
 
         }
 

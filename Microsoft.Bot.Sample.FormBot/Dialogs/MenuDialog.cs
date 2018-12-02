@@ -93,7 +93,7 @@ namespace FormBot.Dialogs
                 //    await context.PostAsync(invalidCourseInput);
                 //}
 
-                context.UserData.SetValue("PromptCourse", false);
+                //context.UserData.SetValue("PromptCourse", false);
 
                 await ResumeGetAcademicIntent(context, new AwaitableFromItem<string>(""));
 
@@ -141,7 +141,8 @@ namespace FormBot.Dialogs
         {
             await Helpers.ActualizarSolicitud(context, AppConstant.EstadoSolicitud.ATENDIDO);
             // 4.1.14  El caso de uso finaliza
-            context.Wait(MessageReceivedAsync);
+            //context.Wait(MessageReceivedAsync);
+            context.Done(true);
         }
 
         public static async Task ResumeAfterUnknownAcademicIntent(IDialogContext context, IAwaitable<object> result)
