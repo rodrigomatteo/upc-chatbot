@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Upecito.Model;
+﻿using Upecito.Model;
 
 namespace Upecito.Interface
 {
     public interface ISesion
     {
         Sesion CrearSesion(long idUsuario);
-        Sesion CerrarSesion(long idSesion);        
+        Sesion CerrarSesion(long idSesion);
+        AlumnoUsuarioViewModel LeerDatosUsuario(int idUsuario);
     }
 }

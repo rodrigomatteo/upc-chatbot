@@ -1,11 +1,7 @@
 ﻿using FormBot.Util;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Upecito.Data.Common;
 using Upecito.Data.Implementation;
 using Upecito.Data.Interface;
@@ -98,5 +94,51 @@ namespace Upecito.Data.MSSQLSERVER.Implementacion
                 throw;
             }
         }
+
+        public AlumnoUsuarioViewModel LeerUsuario(int idUsuario)
+        {
+            AlumnoUsuarioViewModel sesion = new AlumnoUsuarioViewModel();
+
+            try
+            {
+                DateTime dateTimeNow = ConvertidorUtil.GmtToPacific(DateTime.Now);
+
+                using (var cnn = MSSQLSERVERCnx.MSSqlCnx())
+                {
+                    SqlCommand cmd = null;
+                    cnn.Open();
+
+                    cmd = new SqlCommand(SP.GSAV_SP_LEERDATOSUSUARIO, cnn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+                    cmd.Parameters.AddWithValue("@pIdUsuario", idUsuario);
+
+                    SqlDataReader rd = cmd.ExecuteReader();
+
+                    if (rd.HasRows)
+                    {
+                        if (rd.Read())
+                        {
+                            sesion.IdAlumno = rd.GetInt32(rd.GetOrdinal("IDALUMNO"));
+                            sesion.CodigoAlumno = rd.GetString(rd.GetOrdinal("CODIGOALUMNO"));
+                            sesion.Unidad = rd.GetString(rd.GetOrdinal("UNIDAD"));
+                            sesion.IdPersona = rd.GetInt32(rd.GetOrdinal("IDPERSONA"));
+                            sesion.IdUsuario = rd.GetInt32(rd.GetOrdinal("IDUSUARIO"));
+                            sesion.NombreUsuario = rd.GetString(rd.GetOrdinal("NOMBREUSUARIO"));
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                LogError(ex);
+            }
+
+            return sesion;
+        }
+
     }
 }

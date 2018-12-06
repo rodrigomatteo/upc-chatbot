@@ -328,9 +328,9 @@ namespace FormBot.Util
             {               
                 resultado = Convert.ToInt64(value);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Console.WriteLine(ex.Message);
             }
             return resultado;
         }

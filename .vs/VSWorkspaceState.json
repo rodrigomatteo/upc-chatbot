@@ -2,14 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\Microsoft.Bot.Sample.FormBot",
+    "\\Microsoft.Bot.Sample.FormBot\\Dialogflow",
     "\\Microsoft.Bot.Sample.FormBot\\Dialogs",
     "\\Microsoft.Bot.Sample.FormBot\\Upecito.Helpers",
     "\\Microsoft.Bot.Sample.FormBot\\Upecito.Interface",
     "\\Microsoft.Bot.Sample.FormBot\\Upecito.Model",
     "\\Microsoft.Bot.Sample.FormBot\\Upecito.Model\\ViewModel",
     "\\Microsoft.Bot.Sample.FormBot\\UpecitoData",
-    "\\Microsoft.Bot.Sample.FormBot\\UpecitoData\\Interface",
-    "\\Microsoft.Bot.Sample.FormBot\\UpecitoData\\MSSQLSERVER"
+    "\\Microsoft.Bot.Sample.FormBot\\UpecitoData\\Interface"
   ],
   "SelectedNode": "\\Microsoft.Bot.Sample.FormBot\\Upecito.Helpers\\Helpers.cs",
   "PreviewInSolutionExplorer": false

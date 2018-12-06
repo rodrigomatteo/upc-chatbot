@@ -6,5 +6,6 @@ namespace Upecito.Data.Interface
     {
         Sesion Crear(long idAlumno);
         Sesion Cerrar(long idSesion);
+        AlumnoUsuarioViewModel LeerUsuario(int idUsuario);
     }
 }

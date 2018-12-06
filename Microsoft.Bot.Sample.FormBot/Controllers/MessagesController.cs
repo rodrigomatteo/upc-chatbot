@@ -44,7 +44,9 @@ namespace Microsoft.Bot.Sample.FormBot
             //TODO: For testing purposes
             if (activity.ChannelId == "emulator")
             {
-                activity.From.Id = "1";
+                //activity.From.Id = "1"; //U201502689 - idPersonas = 1 - LISSETH
+                //activity.From.Id = "7"; //U201203752 - idPersonas = 10 - LIZ
+                activity.From.Id = "2"; //U201115024
 
                 if (activity.Type == ActivityTypes.ConversationUpdate)
                 {

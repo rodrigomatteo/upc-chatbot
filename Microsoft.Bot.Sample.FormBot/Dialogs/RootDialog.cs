@@ -37,7 +37,7 @@ namespace FormBot.Dialogs
 
             var sesionData = context.UserData.GetValueOrDefault<Sesion>("sesion");
 
-            if (sesionData == null)
+            if (sesionData == null || sesionData?.IdSesion == 0)
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(context.Activity.ServiceUrl));
 
@@ -45,7 +45,21 @@ namespace FormBot.Dialogs
                 UnityConfig.RegisterTypes(container);
 
                 var sesion = container.GetInstance<ISesion>();
-                sesionData = sesion.CrearSesion(ConvertidorUtil.GetLong(userId));
+
+                AlumnoUsuarioViewModel alumno = sesion.LeerDatosUsuario(int.Parse(userId));
+
+                if (alumno.IdAlumno == 0)
+                {
+                    var message = context.MakeMessage();
+                    message.Text = $"No se ha registrado con un número de Alumno válido";
+
+                    await context.PostAsync(message);
+
+                    context.Done(this);
+                    return;
+                }
+
+                sesionData = sesion.CrearSesion(ConvertidorUtil.GetLong(alumno.IdAlumno.ToString()));
                 context.UserData.SetValue("sesion", sesionData);
 
             }

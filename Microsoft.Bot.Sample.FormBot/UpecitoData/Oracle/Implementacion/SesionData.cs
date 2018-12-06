@@ -133,5 +133,10 @@ namespace Upecito.Data.Oracle.Implementacion
 
             return null;
         }
+
+        public AlumnoUsuarioViewModel LeerUsuario(int idUsuario)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

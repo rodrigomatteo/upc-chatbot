@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Upecito.Model
+﻿namespace Upecito.Model
 {
     public class Alumno
     {
@@ -11,5 +6,16 @@ namespace Upecito.Model
         public string CodigoAlumno { get; set; }
         public string Unidad { get; set; }
         public int IdPersona { get; set; }
+    }
+
+    public class AlumnoUsuarioViewModel
+    {
+        public int IdAlumno { get; set; }
+        public string CodigoAlumno { get; set; }
+        public string Unidad { get; set; }
+        public int IdPersona { get; set; }
+
+        public int IdUsuario { get; set; }
+        public string NombreUsuario { get; set; }
     }
 }

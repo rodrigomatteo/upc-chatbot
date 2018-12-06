@@ -221,12 +221,21 @@ namespace Upecito.Bot.Upecito.Helpers
                                 }
                             }
 
+                            var message = context.MakeMessage();
+
                             switch (intent)
                             {
-                                /*
-                                 * 4.1.7	Si la “Intención de Consulta” es “Programación de Actividades”, 
-                                 * el sistema extiende el caso de uso: GSAV_CUS005_Consultar Programación de Actividades
-                                */
+                                case "ActividadAcademica":
+                                    message.Text = $"Esta es una consulta de: {intent}";
+
+                                    context.PrivateConversationData.SetValue("custom", message.Text);
+
+                                    await context.PostAsync(message);
+
+                                    await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.ATENDIDO);
+                                    context.Wait(MenuDialog.MessageReceivedAsync);
+                                    break;
+
                                 case AppConstant.Intencion.PROGRAMACION:
 
                                     if (receivedResult.Intents[0].AllRequiredParamsPresent)
@@ -248,6 +257,8 @@ namespace Upecito.Bot.Upecito.Helpers
 
                                             await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.DERIVADA);
                                             context.Wait(MenuDialog.MessageReceivedAsync);
+
+                                            return;
                                         }
 
                                         if (numberSelected > 0)
@@ -305,7 +316,8 @@ namespace Upecito.Bot.Upecito.Helpers
                                         else
                                         {
                                             //context.Wait(MenuDialog.ResumeAfterFailedAcademicIntent);
-                                            await context.PostAsync(receivedResult.Speech);
+                                            //await context.PostAsync(receivedResult.Speech);
+                                            await context.PostAsync("La información ingresada es invalida, ingrese nuevamente su consulta");
 
                                             //context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterDerivedAcademicIntent);
 
@@ -315,7 +327,7 @@ namespace Upecito.Bot.Upecito.Helpers
 
                                             //context.Call(new ProgramacionActividadesDialog(), MenuDialog.ResumeAfterSuccessAcademicIntent);
 
-                                            await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.DERIVADA);
+                                            await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.INVALIDO);
                                             context.Wait(MenuDialog.MessageReceivedAsync);
                                         }
 
@@ -392,16 +404,18 @@ namespace Upecito.Bot.Upecito.Helpers
                                     }
 
                                     break;
-                                /*
-                                 * 4.1.8	Si la “Intención de Consulta” es “Calendario Académico”, 
-                                 * el sistema extiende el caso de uso: GSAV_CUS006_Consultar Calendario Académico
-                                */
+
                                 case AppConstant.Intencion.CREDITOS:
                                 case AppConstant.Intencion.ORGANIZACION:
                                 case AppConstant.Intencion.CALENDARIO:
+                                case "OrganizacionAulaVirtual1":
                                     //context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
-                                    var message = context.MakeMessage();
+                                    message = context.MakeMessage();
                                     message.Text = $"Esta es una consulta de: {intent}";
+
+                                    //receivedResult.Speech = message.Text;
+                                    context.PrivateConversationData.SetValue("custom", message.Text);
+
                                     await context.PostAsync(message);
                                     //context.Wait(MenuDialog.MessageReceivedAsync);
                                     //context.Call(new MenuDialog(), ResumeAfterSuccessAcademicIntent);
@@ -415,11 +429,7 @@ namespace Upecito.Bot.Upecito.Helpers
                                 //case AppConstant.Intencion.ORGANIZACION:
                                 //    context.Call(new OrganizacionDialog(), ResumeAfterSuccessAcademicIntent);
                                 //    break;
-                                /*
-                                * 4.1.9	Si la “Intención de Consulta” es “Organización de Aula Virtual”, “Matricula”, 
-                                * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
-                                * GSAV_CUS007_Consultar Temas Frecuentes
-                               */
+
                                 case AppConstant.Intencion.MATRICULA:
                                 case AppConstant.Intencion.ASISTENCIA:
                                 case AppConstant.Intencion.RETIRO:
@@ -437,10 +447,7 @@ namespace Upecito.Bot.Upecito.Helpers
                                     context.Wait(MenuDialog.MessageReceivedAsync);
 
                                     break;
-                                /*
-                                 * 4.1.10  Si la “Intención de Consulta” es “Créditos de un Curso”, el sistema extiende el caso de uso: 
-                                 * GSAV_CUS008_Consultar Créditos de un Curso
-                                */
+
                                 //case AppConstant.Intencion.CREDITOS:
                                 //    context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
                                 //    break;
@@ -461,13 +468,6 @@ namespace Upecito.Bot.Upecito.Helpers
 
 
                                 default:
-                                    /*
-                                     * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
-                                     * para el tipo de consulta ingresada por el alumno, entonces deriva la
-                                     * consulta al docente enviando un correo electrónico y actualiza el estado
-                                     * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
-                                     * [GSAV_RN004-Comsultas Académicas No Resueltas]
-                                     */
                                     //context.Call(new NoRespuestaDialog(), MenuDialog.ResumeAfterDerivedAcademicIntent);
 
                                     await ActualizarSolicitud(context, AppConstant.EstadoSolicitud.DERIVADA);
@@ -555,6 +555,8 @@ namespace Upecito.Bot.Upecito.Helpers
             context.UserData.SetValue("Curso", string.Empty);
             context.UserData.SetValue("Tarea", string.Empty);
             context.UserData.SetValue("number", string.Empty);
+
+            context.UserData.SetValue("Actividad", new ActivitiesByCourseViewModel());
 
             return solicitud;
         }

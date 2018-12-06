@@ -12,5 +12,7 @@
         public static string GSAV_SP_CREARCHATLOG = "GSAV.SP_CREARCHATLOG";
         public static string GSAV_SP_ACTIVIDADESCURSOALUMNO = "GSAV.SP_ACTIVIDADESCURSOALUMNO";
         public static string GSAV_SP_DOCENTECURSO = "GSAV.SP_DOCENTECURSO";
+
+        public static string GSAV_SP_LEERDATOSUSUARIO = "GSAV.SP_LEERDATOSUSUARIO";
     }
 }

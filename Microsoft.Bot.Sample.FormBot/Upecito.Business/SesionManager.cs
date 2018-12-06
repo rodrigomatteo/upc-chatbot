@@ -25,5 +25,11 @@ namespace Upecito.Business
             var sesionData = container.GetInstance<ISesionData>();
             return sesionData.Cerrar(idSesion);
         }
+
+        public AlumnoUsuarioViewModel LeerDatosUsuario(int idUsuario)
+        {
+            var sesionData = container.GetInstance<ISesionData>();
+            return sesionData.LeerUsuario(idUsuario);
+        }
     }
 }
