@@ -223,7 +223,7 @@ namespace Upecito.Bot.Upecito.Helpers
 
                             var message = context.MakeMessage();
 
-                            switch (intencion.NombreBase)
+                            switch (intent)
                             {
                                 case "ActividadAcademica":
                                     message.Text = $"Esta es una consulta de: {intent}";
@@ -361,7 +361,7 @@ namespace Upecito.Bot.Upecito.Helpers
 
                                     break;
 
-                                case AppConstant.Intencion.CREDITOSCUSTOM:
+                                case "CreditosWS":
                                     if (receivedResult.Intents[0].AllRequiredParamsPresent)
                                     {
                                         var actividadManager = container.GetInstance<IActividad>();
@@ -408,7 +408,7 @@ namespace Upecito.Bot.Upecito.Helpers
                                 case AppConstant.Intencion.CREDITOS:
                                 case AppConstant.Intencion.ORGANIZACION:
                                 case AppConstant.Intencion.CALENDARIO:
-                                //case "OrganizacionAulaVirtual1":
+                                case "OrganizacionAulaVirtual1":
                                     //context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
                                     message = context.MakeMessage();
                                     message.Text = $"Esta es una consulta de: {intent}";
