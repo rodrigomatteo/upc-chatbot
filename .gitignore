@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs/Microsoft.Bot.Sample.FormBot/v15/Server/sqlite3/db.lock
+/.vs
+/Microsoft.Bot.Sample.FormBot/Log/Nov-2018

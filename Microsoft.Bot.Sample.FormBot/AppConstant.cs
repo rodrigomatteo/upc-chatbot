@@ -41,6 +41,7 @@ namespace FormBot
             public const string PROGRAMACION = "ProgramacionAcademica";
             public const string CALENDARIO = "CalendarioAcademico";
             public const string ORGANIZACION = "Organizacion del Aula Virtual";
+            public const string CREDITOSCUSTOM = "CreditosCustom";
             public const string DEFAULT = "Default Fallback Intent";            
         }
 
